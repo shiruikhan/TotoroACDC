@@ -21,7 +21,7 @@ def buscar_produtos(pagina=1):
     params = {
         "limit": 100,
         "pagina": pagina,
-        "filters": "tipo[P];situacao[A]",
+        "filters": "tipo[PS];criterio[2]",
         "filtroSaldoEstoque": 1
     }
 
