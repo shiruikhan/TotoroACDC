@@ -1,6 +1,8 @@
 import requests
 import os
 from dotenv import load_dotenv
+from logger import logger
+
 
 ENV_PATH = '.env'
 load_dotenv(dotenv_path=ENV_PATH)
@@ -23,11 +25,11 @@ def renovar_token():
         atualizar_env("BLING_ACCESS_TOKEN", access_token)
         atualizar_env("BLING_REFRESH_TOKEN", refresh_token)
 
-        print("Tokens atualizados com sucesso.")
+        logger.info("Tokens atualizados com sucesso.")
         return access_token
     else:
-        print("Erro ao renovar token:", response.status_code)
-        print(response.text)
+        logger.error("Erro ao renovar token:", response.status_code)
+        logger.info(response.text)
         return None
 
 def atualizar_env(chave, novo_valor):

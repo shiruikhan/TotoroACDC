@@ -1,29 +1,29 @@
+from logger import logger
 import time
 from bling_api import buscar_produtos
 from db import conectar_mysql, criar_tabela, inserir_ou_atualizar
 
 def main():
     try:
-        print("🚀 Iniciando sincronização com o Bling")
+        logger.info("🚀 Iniciando sincronização com o Bling")
 
-        print("🔌 Conectando ao banco de dados...")
+        logger.info("🔌 Conectando ao banco de dados...")
         conn = conectar_mysql()
         cursor = conn.cursor()
 
-        print("📦 Criando tabela (caso não exista)...")
+        logger.info("📦 Criando tabela (caso não exista)...")
         criar_tabela(cursor)
 
-        offset = 0
-        limite = 100
+        pagina = 1
         total_inseridos = 0
 
         while True:
-            print(f"➡️ Buscando produtos | Offset: {offset}")
-            produtos = buscar_produtos(offset)
-            print(f"🔍 Produtos retornados: {len(produtos)}")
+            logger.info(f"➡️ Buscando produtos | Página: {pagina}")
+            produtos = buscar_produtos(pagina)
+            logger.info(f"🔍 Produtos retornados: {len(produtos)}")
 
             if not produtos:
-                print("⚠️ Nenhum produto retornado. Encerrando.")
+                logger.warning("⚠️ Nenhum produto retornado. Encerrando.")
                 break
 
             for p in produtos:
@@ -34,23 +34,24 @@ def main():
                     "preco": float(p.get("preco", 0)),
                     "saldovirtualtotal": float(p.get("estoque", {}).get("saldoVirtualTotal", 0)),
                 }
-                inserir_ou_atualizar(cursor, produto_data)
-                total_inseridos += 1
+                inserido = inserir_ou_atualizar(cursor, produto_data, conn)
+                if inserido:
+                    total_inseridos += 1
 
-            print("✅ Commitando alterações...")
+            logger.info("✅ Commitando alterações...")
             conn.commit()
 
-            offset += limite
+            pagina += 1
             time.sleep(0.5)
 
-        print(f"🏁 Sincronização concluída com {total_inseridos} produtos inseridos/atualizados.")
+        logger.info(f"🏁 Sincronização concluída com {total_inseridos} produtos inseridos/atualizados.")
 
         cursor.close()
         conn.close()
 
     except Exception as e:
-        print(f"❌ Erro fatal na execução: {e}")
+        logger.critical(f"❌ Erro fatal na execução: {e}")
 
 if __name__ == "__main__":
-    print("📄 Executando main.py diretamente")
+    logger.info("📄 Executando main.py diretamente")
     main()
