@@ -52,9 +52,6 @@ def logout():
     session.pop('usuario', None)
     return redirect(url_for('login'))
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     msg = ''
@@ -77,3 +74,6 @@ def register():
         finally:
             cur.close()
     return render_template('register.html', msg=msg)
+
+if __name__ == '__main__':
+    app.run(debug=True)
