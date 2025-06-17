@@ -54,3 +54,26 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    msg = ''
+    if request.method == 'POST':
+        nomeusu = request.form['nomeusu']
+        documento = request.form['documento']
+        email = request.form['email']
+        senha = request.form['senha'].encode('utf-8')
+        senha_hash = bcrypt.hashpw(senha, bcrypt.gensalt()).decode('utf-8')
+
+        cur = mysql.connection.cursor()
+        try:
+            cur.execute("INSERT INTO usuarios (nomeusu, documento, email, senha) VALUES (%s, %s, %s, %s)",
+                        (nomeusu, documento, email, senha_hash))
+            mysql.connection.commit()
+            msg = 'Usuário cadastrado com sucesso!'
+            return redirect(url_for('login'))
+        except Exception as e:
+            msg = 'Erro ao cadastrar: ' + str(e)
+        finally:
+            cur.close()
+    return render_template('register.html', msg=msg)

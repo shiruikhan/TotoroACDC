@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Produtos</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Produtos</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
 <body>
+<header>
+  <img src="{{ url_for('static', filename='Logo_ACDC.png') }}" alt="Logo ACDC">
+</header>
+<div class="container">
   <h2>Bem-vindo, {{ usuario.nomeusu }}</h2>
   <a href="{{ url_for('logout') }}">Logout</a>
   <h3>Lista de Produtos</h3>
-  <table border="1">
+  <table>
     <tr><th>Código</th><th>Nome</th><th>Estoque</th></tr>
     {% for p in produtos %}
       <tr><td>{{ p[0] }}</td><td>{{ p[1] }}</td><td>{{ p[2] }}</td></tr>
     {% endfor %}
   </table>
+</div>
 </body>
 </html>
-
