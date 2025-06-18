@@ -109,8 +109,12 @@
             <td>
               <div class="action-buttons">
                 <button 
-                  class="btn btn-primary btn-small" 
-                  onclick="adicionarAoCarrinho({{ p[0] }}, '{{ p[1]|replace("'", "\\'") }}', {{ p[3] if p[3] else 0 }}, {{ p[2] }})"
+                  class="btn btn-primary btn-small add-to-cart-btn" 
+                  data-codigo="{{ p[0] }}"
+                  data-nome="{{ p[1] }}"
+                  data-preco="{{ p[3] if p[3] else 0 }}"
+                  data-estoque="{{ p[2] }}"
+                  onclick="adicionarAoCarrinho(this)"
                   {% if p[2] <= 0 %}disabled{% endif %}
                 >
                   {% if p[2] <= 0 %}
@@ -143,12 +147,27 @@ function toggleCart() {
   cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
 }
 
-function adicionarAoCarrinho(codigo, nome, preco, estoque) {
+function adicionarAoCarrinho(button) {
+  // Pegar dados do botão
+  const codigo = parseInt(button.getAttribute('data-codigo'));
+  const nome = button.getAttribute('data-nome');
+  const preco = parseFloat(button.getAttribute('data-preco'));
+  const estoque = parseInt(button.getAttribute('data-estoque'));
+  
+  // Pegar quantidade do input
   const quantidadeInput = document.getElementById(`qty-${codigo}`);
   const quantidade = parseInt(quantidadeInput.value);
   
-  if (!quantidade || quantidade <= 0 || quantidade > estoque) {
-    alert('Quantidade inválida!');
+  console.log('Adicionando ao carrinho:', { codigo, nome, preco, quantidade, estoque });
+  
+  // Validações
+  if (!quantidade || quantidade <= 0) {
+    alert('Por favor, digite uma quantidade válida!');
+    return;
+  }
+  
+  if (quantidade > estoque) {
+    alert(`Quantidade máxima disponível: ${estoque}`);
     return;
   }
   
@@ -166,7 +185,7 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
     carrinho.push({
       codigo: codigo,
       nome: nome,
-      preco: parseFloat(preco),
+      preco: preco,
       quantidade: quantidade,
       estoque: estoque
     });
@@ -175,7 +194,6 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
   atualizarCarrinho();
   
   // Feedback visual
-  const button = event.target;
   const originalText = button.textContent;
   const originalColor = button.style.background;
   
@@ -185,7 +203,10 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
   setTimeout(() => {
     button.textContent = originalText;
     button.style.background = originalColor;
-  }, 1000);
+  }, 1500);
+  
+  // Resetar quantidade para 1
+  quantidadeInput.value = 1;
 }
 
 function removerDoCarrinho(codigo) {
@@ -212,6 +233,8 @@ function atualizarCarrinho() {
   const cartItems = document.getElementById('cart-items');
   const cartTotal = document.getElementById('cart-total');
   const cartCount = document.getElementById('cart-count');
+  
+  console.log('Atualizando carrinho:', carrinho);
   
   if (carrinho.length === 0) {
     cartItems.innerHTML = `
@@ -339,6 +362,7 @@ function filtrarProdutos() {
 // Inicializar carrinho ao carregar a página
 document.addEventListener('DOMContentLoaded', function() {
   atualizarCarrinho();
+  console.log('Dashboard carregado, carrinho inicializado');
 });
 </script>
 
