@@ -29,9 +29,26 @@
 <div class="container">
   <h2>Nossos Produtos</h2>
   
+  <!-- Search Bar -->
+  <div class="search-container">
+    <div class="search-box">
+      <input 
+        type="text" 
+        class="search-input" 
+        id="search-input" 
+        placeholder="Buscar produtos por nome ou código..."
+        onkeyup="filtrarProdutos()"
+      >
+      <span class="search-icon">🔍</span>
+    </div>
+  </div>
+  
   <!-- Cart Section (Initially Hidden) -->
   <div id="cart-section" class="cart-container" style="display: none;">
-    <h3>🛒 Seu Carrinho</h3>
+    <div class="cart-header">
+      <h3 class="cart-title">🛒 Seu Carrinho</h3>
+      <button class="btn btn-small" onclick="toggleCart()">Fechar</button>
+    </div>
     <div id="cart-items">
       <div class="empty-cart">
         <div class="empty-cart-icon">🛒</div>
@@ -42,53 +59,79 @@
       <div class="total-amount">
         Total: R$ <span id="total-value">0,00</span>
       </div>
-      <button class="btn btn-primary" onclick="finalizarPedido()" style="margin-top: 15px;">
+      <button class="btn btn-success" onclick="finalizarPedido()" style="margin-top: 15px;">
         Finalizar Pedido
       </button>
     </div>
   </div>
 
-  <!-- Products Grid -->
-  <div class="products-grid">
-    {% for p in produtos %}
-      <div class="product-card fade-in">
-        <div class="product-header">
-          <span class="product-code">{{ p[0] }}</span>
-          <span class="product-stock {% if p[2] > 10 %}stock-high{% elif p[2] > 5 %}stock-medium{% else %}stock-low{% endif %}">
-            Estoque: {{ p[2] }}
-          </span>
-        </div>
-        
-        <h3 class="product-name">{{ p[1] }}</h3>
-        
-        <div class="product-price">
-          R$ {{ "%.2f"|format(p[3] if p[3] else 0) }}
-        </div>
-        
-        <div class="product-actions">
-          <input 
-            type="number" 
-            class="quantity-input" 
-            id="qty-{{ p[0] }}" 
-            min="1" 
-            max="{{ p[2] }}" 
-            value="1"
-            {% if p[2] <= 0 %}disabled{% endif %}
-          >
-          <button 
-            class="btn btn-primary" 
-            onclick="adicionarAoCarrinho({{ p[0] }}, '{{ p[1] }}', {{ p[3] if p[3] else 0 }}, {{ p[2] }})"
-            {% if p[2] <= 0 %}disabled{% endif %}
-          >
-            {% if p[2] <= 0 %}
-              Sem Estoque
-            {% else %}
-              Adicionar
-            {% endif %}
-          </button>
-        </div>
-      </div>
-    {% endfor %}
+  <!-- Products Table -->
+  <div class="table-container">
+    <table class="products-table">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nome do Produto</th>
+          <th>Preço</th>
+          <th>Estoque</th>
+          <th>Quantidade</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="products-tbody">
+        {% for p in produtos %}
+          <tr class="product-row fade-in" data-name="{{ p[1]|lower }}" data-code="{{ p[0]|lower }}">
+            <td>
+              <span class="product-code">{{ p[0] }}</span>
+            </td>
+            <td>
+              <div class="product-name">{{ p[1] }}</div>
+            </td>
+            <td>
+              <div class="product-price">R$ {{ "%.2f"|format(p[3] if p[3] else 0) }}</div>
+            </td>
+            <td>
+              <span class="{% if p[2] > 10 %}stock-high{% elif p[2] > 5 %}stock-medium{% else %}stock-low{% endif %}">
+                {{ p[2] }} un.
+              </span>
+            </td>
+            <td>
+              <input 
+                type="number" 
+                class="quantity-input" 
+                id="qty-{{ p[0] }}" 
+                min="1" 
+                max="{{ p[2] }}" 
+                value="1"
+                {% if p[2] <= 0 %}disabled{% endif %}
+              >
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button 
+                  class="btn btn-primary btn-small" 
+                  onclick="adicionarAoCarrinho({{ p[0] }}, '{{ p[1]|replace("'", "\\'") }}', {{ p[3] if p[3] else 0 }}, {{ p[2] }})"
+                  {% if p[2] <= 0 %}disabled{% endif %}
+                >
+                  {% if p[2] <= 0 %}
+                    Sem Estoque
+                  {% else %}
+                    Adicionar
+                  {% endif %}
+                </button>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <!-- No Products Found Message -->
+    <div id="no-products" class="no-products" style="display: none;">
+      <div class="no-products-icon">🔍</div>
+      <h3>Nenhum produto encontrado</h3>
+      <p>Tente buscar com outros termos</p>
+    </div>
   </div>
 </div>
 
@@ -104,7 +147,7 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
   const quantidadeInput = document.getElementById(`qty-${codigo}`);
   const quantidade = parseInt(quantidadeInput.value);
   
-  if (quantidade <= 0 || quantidade > estoque) {
+  if (!quantidade || quantidade <= 0 || quantidade > estoque) {
     alert('Quantidade inválida!');
     return;
   }
@@ -123,7 +166,7 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
     carrinho.push({
       codigo: codigo,
       nome: nome,
-      preco: preco,
+      preco: parseFloat(preco),
       quantidade: quantidade,
       estoque: estoque
     });
@@ -134,12 +177,14 @@ function adicionarAoCarrinho(codigo, nome, preco, estoque) {
   // Feedback visual
   const button = event.target;
   const originalText = button.textContent;
+  const originalColor = button.style.background;
+  
   button.textContent = 'Adicionado!';
-  button.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+  button.style.background = '#28a745';
   
   setTimeout(() => {
     button.textContent = originalText;
-    button.style.background = '';
+    button.style.background = originalColor;
   }, 1000);
 }
 
@@ -206,10 +251,10 @@ function atualizarCarrinho() {
             max="${item.estoque}"
             onchange="alterarQuantidade(${item.codigo}, parseInt(this.value))"
           >
-          <span style="color: #ffcc00; font-weight: bold;">
+          <span style="color: #28a745; font-weight: 600; min-width: 80px;">
             R$ ${subtotal.toFixed(2)}
           </span>
-          <button class="btn btn-small" onclick="removerDoCarrinho(${item.codigo})">
+          <button class="btn btn-small" onclick="removerDoCarrinho(${item.codigo})" style="background: #dc3545;">
             ❌
           </button>
         </div>
@@ -230,7 +275,7 @@ async function finalizarPedido() {
   
   const button = event.target;
   const originalText = button.textContent;
-  button.textContent = 'Processando...';
+  button.innerHTML = '<span class="loading"></span> Processando...';
   button.disabled = true;
   
   try {
@@ -262,6 +307,32 @@ async function finalizarPedido() {
   } finally {
     button.textContent = originalText;
     button.disabled = false;
+  }
+}
+
+function filtrarProdutos() {
+  const searchTerm = document.getElementById('search-input').value.toLowerCase();
+  const rows = document.querySelectorAll('.product-row');
+  const noProductsMsg = document.getElementById('no-products');
+  let visibleCount = 0;
+  
+  rows.forEach(row => {
+    const name = row.getAttribute('data-name');
+    const code = row.getAttribute('data-code');
+    
+    if (name.includes(searchTerm) || code.includes(searchTerm)) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+  
+  // Mostrar mensagem se nenhum produto for encontrado
+  if (visibleCount === 0 && searchTerm !== '') {
+    noProductsMsg.style.display = 'block';
+  } else {
+    noProductsMsg.style.display = 'none';
   }
 }
 
