@@ -2,23 +2,274 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Produtos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja ACDC - Produtos</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <header>
   <img src="{{ url_for('static', filename='Logo_ACDC.png') }}" alt="Logo ACDC">
 </header>
+
+<nav class="nav-bar">
+  <div class="nav-container">
+    <div class="user-info">
+      <span class="user-name">Bem-vindo, {{ usuario.nomeusu }}</span>
+    </div>
+    <div class="nav-actions">
+      <a href="#" class="cart-icon" onclick="toggleCart()">
+        🛒 Carrinho
+        <span class="cart-count" id="cart-count">0</span>
+      </a>
+      <a href="{{ url_for('logout') }}" class="btn btn-small">Logout</a>
+    </div>
+  </div>
+</nav>
+
 <div class="container">
-  <h2>Bem-vindo, {{ usuario.nomeusu }}</h2>
-  <a href="{{ url_for('logout') }}">Logout</a>
-  <h3>Lista de Produtos</h3>
-  <table>
-    <tr><th>Código</th><th>Nome</th><th>Estoque</th></tr>
+  <h2>Nossos Produtos</h2>
+  
+  <!-- Cart Section (Initially Hidden) -->
+  <div id="cart-section" class="cart-container" style="display: none;">
+    <h3>🛒 Seu Carrinho</h3>
+    <div id="cart-items">
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <p>Seu carrinho está vazio</p>
+      </div>
+    </div>
+    <div id="cart-total" class="cart-total" style="display: none;">
+      <div class="total-amount">
+        Total: R$ <span id="total-value">0,00</span>
+      </div>
+      <button class="btn btn-primary" onclick="finalizarPedido()" style="margin-top: 15px;">
+        Finalizar Pedido
+      </button>
+    </div>
+  </div>
+
+  <!-- Products Grid -->
+  <div class="products-grid">
     {% for p in produtos %}
-      <tr><td>{{ p[0] }}</td><td>{{ p[1] }}</td><td>{{ p[2] }}</td></tr>
+      <div class="product-card fade-in">
+        <div class="product-header">
+          <span class="product-code">{{ p[0] }}</span>
+          <span class="product-stock {% if p[2] > 10 %}stock-high{% elif p[2] > 5 %}stock-medium{% else %}stock-low{% endif %}">
+            Estoque: {{ p[2] }}
+          </span>
+        </div>
+        
+        <h3 class="product-name">{{ p[1] }}</h3>
+        
+        <div class="product-price">
+          R$ {{ "%.2f"|format(p[3] if p[3] else 0) }}
+        </div>
+        
+        <div class="product-actions">
+          <input 
+            type="number" 
+            class="quantity-input" 
+            id="qty-{{ p[0] }}" 
+            min="1" 
+            max="{{ p[2] }}" 
+            value="1"
+            {% if p[2] <= 0 %}disabled{% endif %}
+          >
+          <button 
+            class="btn btn-primary" 
+            onclick="adicionarAoCarrinho({{ p[0] }}, '{{ p[1] }}', {{ p[3] if p[3] else 0 }}, {{ p[2] }})"
+            {% if p[2] <= 0 %}disabled{% endif %}
+          >
+            {% if p[2] <= 0 %}
+              Sem Estoque
+            {% else %}
+              Adicionar
+            {% endif %}
+          </button>
+        </div>
+      </div>
     {% endfor %}
-  </table>
+  </div>
 </div>
+
+<script>
+let carrinho = [];
+
+function toggleCart() {
+  const cartSection = document.getElementById('cart-section');
+  cartSection.style.display = cartSection.style.display === 'none' ? 'block' : 'none';
+}
+
+function adicionarAoCarrinho(codigo, nome, preco, estoque) {
+  const quantidadeInput = document.getElementById(`qty-${codigo}`);
+  const quantidade = parseInt(quantidadeInput.value);
+  
+  if (quantidade <= 0 || quantidade > estoque) {
+    alert('Quantidade inválida!');
+    return;
+  }
+  
+  // Verificar se o produto já está no carrinho
+  const itemExistente = carrinho.find(item => item.codigo === codigo);
+  
+  if (itemExistente) {
+    const novaQuantidade = itemExistente.quantidade + quantidade;
+    if (novaQuantidade > estoque) {
+      alert(`Quantidade máxima disponível: ${estoque}`);
+      return;
+    }
+    itemExistente.quantidade = novaQuantidade;
+  } else {
+    carrinho.push({
+      codigo: codigo,
+      nome: nome,
+      preco: preco,
+      quantidade: quantidade,
+      estoque: estoque
+    });
+  }
+  
+  atualizarCarrinho();
+  
+  // Feedback visual
+  const button = event.target;
+  const originalText = button.textContent;
+  button.textContent = 'Adicionado!';
+  button.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+  
+  setTimeout(() => {
+    button.textContent = originalText;
+    button.style.background = '';
+  }, 1000);
+}
+
+function removerDoCarrinho(codigo) {
+  carrinho = carrinho.filter(item => item.codigo !== codigo);
+  atualizarCarrinho();
+}
+
+function alterarQuantidade(codigo, novaQuantidade) {
+  const item = carrinho.find(item => item.codigo === codigo);
+  if (item) {
+    if (novaQuantidade <= 0) {
+      removerDoCarrinho(codigo);
+    } else if (novaQuantidade <= item.estoque) {
+      item.quantidade = novaQuantidade;
+      atualizarCarrinho();
+    } else {
+      alert(`Quantidade máxima disponível: ${item.estoque}`);
+      document.getElementById(`cart-qty-${codigo}`).value = item.quantidade;
+    }
+  }
+}
+
+function atualizarCarrinho() {
+  const cartItems = document.getElementById('cart-items');
+  const cartTotal = document.getElementById('cart-total');
+  const cartCount = document.getElementById('cart-count');
+  
+  if (carrinho.length === 0) {
+    cartItems.innerHTML = `
+      <div class="empty-cart">
+        <div class="empty-cart-icon">🛒</div>
+        <p>Seu carrinho está vazio</p>
+      </div>
+    `;
+    cartTotal.style.display = 'none';
+    cartCount.textContent = '0';
+    return;
+  }
+  
+  let total = 0;
+  let totalItens = 0;
+  
+  cartItems.innerHTML = carrinho.map(item => {
+    const subtotal = item.preco * item.quantidade;
+    total += subtotal;
+    totalItens += item.quantidade;
+    
+    return `
+      <div class="cart-item">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.nome}</div>
+          <div class="cart-item-details">
+            Código: ${item.codigo} | R$ ${item.preco.toFixed(2)} cada
+          </div>
+        </div>
+        <div class="cart-item-actions">
+          <input 
+            type="number" 
+            class="quantity-input" 
+            id="cart-qty-${item.codigo}"
+            value="${item.quantidade}" 
+            min="1" 
+            max="${item.estoque}"
+            onchange="alterarQuantidade(${item.codigo}, parseInt(this.value))"
+          >
+          <span style="color: #ffcc00; font-weight: bold;">
+            R$ ${subtotal.toFixed(2)}
+          </span>
+          <button class="btn btn-small" onclick="removerDoCarrinho(${item.codigo})">
+            ❌
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('total-value').textContent = total.toFixed(2);
+  cartTotal.style.display = 'block';
+  cartCount.textContent = totalItens;
+}
+
+async function finalizarPedido() {
+  if (carrinho.length === 0) {
+    alert('Carrinho vazio!');
+    return;
+  }
+  
+  const button = event.target;
+  const originalText = button.textContent;
+  button.textContent = 'Processando...';
+  button.disabled = true;
+  
+  try {
+    const response = await fetch('/finalizar_pedido', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        itens: carrinho
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      alert(`Pedido realizado com sucesso! Número do pedido: ${result.pedido_id}`);
+      carrinho = [];
+      atualizarCarrinho();
+      toggleCart();
+      // Recarregar a página para atualizar o estoque
+      location.reload();
+    } else {
+      alert('Erro ao processar pedido: ' + result.message);
+    }
+  } catch (error) {
+    alert('Erro ao processar pedido. Tente novamente.');
+    console.error('Erro:', error);
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
+}
+
+// Inicializar carrinho ao carregar a página
+document.addEventListener('DOMContentLoaded', function() {
+  atualizarCarrinho();
+});
+</script>
+
 </body>
 </html>
