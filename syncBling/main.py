@@ -33,6 +33,9 @@ def main():
                     "nome": p.get("nome"),
                     "preco": float(p.get("preco", 0)),
                     "saldovirtualtotal": float(p.get("estoque", {}).get("saldoVirtualTotal", 0)),
+                    "tipo": p.get("tipo"),
+                    "situacao": p.get("situacao"),
+                    "formato": p.get("formato"),
                 }
                 inserido = inserir_ou_atualizar(cursor, produto_data, conn)
                 if inserido:

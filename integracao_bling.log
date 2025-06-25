@@ -1,0 +1,152 @@
+2025-06-24 15:16:31,847 - INFO - \U0001f4c4 Executando main.py diretamente
+2025-06-24 15:16:31,847 - INFO - \U0001f680 Iniciando sincronização com o Bling
+2025-06-24 15:16:31,847 - INFO - \U0001f50c Conectando ao banco de dados...
+2025-06-24 15:16:31,847 - INFO - Conectado ao banco: totoroacdc
+2025-06-24 15:16:31,877 - INFO - \U0001f4e6 Criando tabela (caso não exista)...
+2025-06-24 15:16:31,880 - INFO - \u27a1\ufe0f Buscando produtos | Página: 1
+2025-06-24 15:16:31,880 - INFO - \U0001f4e1 Requisição -> página=1
+2025-06-24 15:16:32,416 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:32,417 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:32,417 - INFO - \u2192 Primeiro produto: KIT 20 C.I'S REGULADOR DE TENSAO 78L05 SOT89 - 5V 100MA SMD
+2025-06-24 15:16:32,417 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:32,458 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:32,963 - INFO - \u27a1\ufe0f Buscando produtos | Página: 2
+2025-06-24 15:16:32,963 - INFO - \U0001f4e1 Requisição -> página=2
+2025-06-24 15:16:33,454 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:33,454 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:33,454 - INFO - \u2192 Primeiro produto: * INDUTOR 24V 70A/100A
+2025-06-24 15:16:33,455 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:33,497 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:34,010 - INFO - \u27a1\ufe0f Buscando produtos | Página: 3
+2025-06-24 15:16:34,011 - INFO - \U0001f4e1 Requisição -> página=3
+2025-06-24 15:16:34,435 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:34,435 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:34,435 - INFO - \u2192 Primeiro produto: Diodo MUR1680CTD TUR1680 CTD "
+2025-06-24 15:16:34,435 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:34,477 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:34,986 - INFO - \u27a1\ufe0f Buscando produtos | Página: 4
+2025-06-24 15:16:34,986 - INFO - \U0001f4e1 Requisição -> página=4
+2025-06-24 15:16:35,430 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:35,430 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:35,430 - INFO - \u2192 Primeiro produto: VARISTOR 318V 14MM
+2025-06-24 15:16:35,430 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:35,479 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:35,990 - INFO - \u27a1\ufe0f Buscando produtos | Página: 5
+2025-06-24 15:16:35,990 - INFO - \U0001f4e1 Requisição -> página=5
+2025-06-24 15:16:36,474 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:36,475 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:36,475 - INFO - \u2192 Primeiro produto: 10 Peças Capacitor Eletrolítico 47uF 63V 105º ARAME - KETUO
+2025-06-24 15:16:36,475 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:36,527 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:37,037 - INFO - \u27a1\ufe0f Buscando produtos | Página: 6
+2025-06-24 15:16:37,037 - INFO - \U0001f4e1 Requisição -> página=6
+2025-06-24 15:16:37,493 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:37,493 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:37,493 - INFO - \u2192 Primeiro produto: 10 Peças Capacitor Poliester 10nF 630V - Epcos
+2025-06-24 15:16:37,493 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:37,538 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:38,048 - INFO - \u27a1\ufe0f Buscando produtos | Página: 7
+2025-06-24 15:16:38,048 - INFO - \U0001f4e1 Requisição -> página=7
+2025-06-24 15:16:38,496 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:38,496 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:38,496 - INFO - \u2192 Primeiro produto: 2 pçs transistor IRFB4019PBF
+2025-06-24 15:16:38,496 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:38,536 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:39,054 - INFO - \u27a1\ufe0f Buscando produtos | Página: 8
+2025-06-24 15:16:39,054 - INFO - \U0001f4e1 Requisição -> página=8
+2025-06-24 15:16:39,516 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:39,516 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:39,516 - INFO - \u2192 Primeiro produto: TRANSISTOR BD139-16 isolado
+2025-06-24 15:16:39,517 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:39,557 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:40,060 - INFO - \u27a1\ufe0f Buscando produtos | Página: 9
+2025-06-24 15:16:40,060 - INFO - \U0001f4e1 Requisição -> página=9
+2025-06-24 15:16:40,530 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:40,531 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:40,531 - INFO - \u2192 Primeiro produto: TRANSISTOR IGBT IRGP4066D
+2025-06-24 15:16:40,531 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:40,574 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:41,079 - INFO - \u27a1\ufe0f Buscando produtos | Página: 10
+2025-06-24 15:16:41,079 - INFO - \U0001f4e1 Requisição -> página=10
+2025-06-24 15:16:41,506 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:41,506 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:41,507 - INFO - \u2192 Primeiro produto: 100 Pçs Resistor Cr25 (1/4w) 33r
+2025-06-24 15:16:41,507 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:41,550 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:42,066 - INFO - \u27a1\ufe0f Buscando produtos | Página: 11
+2025-06-24 15:16:42,066 - INFO - \U0001f4e1 Requisição -> página=11
+2025-06-24 15:16:42,536 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:42,538 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:42,538 - INFO - \u2192 Primeiro produto: RESISTOR SMD 0805 56R "
+2025-06-24 15:16:42,538 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:42,583 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:43,099 - INFO - \u27a1\ufe0f Buscando produtos | Página: 12
+2025-06-24 15:16:43,099 - INFO - \U0001f4e1 Requisição -> página=12
+2025-06-24 15:16:43,541 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:43,542 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:43,542 - INFO - \u2192 Primeiro produto: TRANSISTOR IRF840 "
+2025-06-24 15:16:43,542 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:43,587 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:44,100 - INFO - \u27a1\ufe0f Buscando produtos | Página: 13
+2025-06-24 15:16:44,100 - INFO - \U0001f4e1 Requisição -> página=13
+2025-06-24 15:16:44,514 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:44,514 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:44,514 - INFO - \u2192 Primeiro produto: TRANSISTOR KSP92
+2025-06-24 15:16:44,515 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:44,563 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:45,077 - INFO - \u27a1\ufe0f Buscando produtos | Página: 14
+2025-06-24 15:16:45,077 - INFO - \U0001f4e1 Requisição -> página=14
+2025-06-24 15:16:45,540 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:45,542 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:45,542 - INFO - \u2192 Primeiro produto: RESISTOR 1W 0R68 "
+2025-06-24 15:16:45,543 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:45,592 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:46,107 - INFO - \u27a1\ufe0f Buscando produtos | Página: 15
+2025-06-24 15:16:46,107 - INFO - \U0001f4e1 Requisição -> página=15
+2025-06-24 15:16:46,624 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:46,625 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:46,625 - INFO - \u2192 Primeiro produto: RESISTOR CR25 5R6 "
+2025-06-24 15:16:46,625 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:46,675 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:47,187 - INFO - \u27a1\ufe0f Buscando produtos | Página: 16
+2025-06-24 15:16:47,187 - INFO - \U0001f4e1 Requisição -> página=16
+2025-06-24 15:16:47,746 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:47,746 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:47,746 - INFO - \u2192 Primeiro produto: RESISTOR 3W 1R5 "
+2025-06-24 15:16:47,747 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:47,792 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:48,303 - INFO - \u27a1\ufe0f Buscando produtos | Página: 17
+2025-06-24 15:16:48,303 - INFO - \U0001f4e1 Requisição -> página=17
+2025-06-24 15:16:48,747 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:48,748 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:48,748 - INFO - \u2192 Primeiro produto: DIODO ZENER 1W 7V5 - 1N4737 "
+2025-06-24 15:16:48,748 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:48,801 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:49,304 - INFO - \u27a1\ufe0f Buscando produtos | Página: 18
+2025-06-24 15:16:49,304 - INFO - \U0001f4e1 Requisição -> página=18
+2025-06-24 15:16:49,783 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:49,783 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:49,783 - INFO - \u2192 Primeiro produto: Circuito Integrado LM555CN
+2025-06-24 15:16:49,783 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:49,830 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:50,337 - INFO - \u27a1\ufe0f Buscando produtos | Página: 19
+2025-06-24 15:16:50,338 - INFO - \U0001f4e1 Requisição -> página=19
+2025-06-24 15:16:50,828 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:50,829 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:50,829 - INFO - \u2192 Primeiro produto: Capacitor Eletrolítico 100uF 50V  105° ARAME
+2025-06-24 15:16:50,829 - INFO - \U0001f50d Produtos retornados: 100
+2025-06-24 15:16:50,877 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:51,391 - INFO - \u27a1\ufe0f Buscando produtos | Página: 20
+2025-06-24 15:16:51,391 - INFO - \U0001f4e1 Requisição -> página=20
+2025-06-24 15:16:51,821 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:51,821 - INFO - \U0001f50d Produtos retornados: 21
+2025-06-24 15:16:51,821 - INFO - \u2192 Primeiro produto: Circuito Integrado Optoacoplador EL817
+2025-06-24 15:16:51,822 - INFO - \U0001f50d Produtos retornados: 21
+2025-06-24 15:16:51,832 - INFO - \u2705 Commitando alterações...
+2025-06-24 15:16:52,344 - INFO - \u27a1\ufe0f Buscando produtos | Página: 21
+2025-06-24 15:16:52,345 - INFO - \U0001f4e1 Requisição -> página=21
+2025-06-24 15:16:52,703 - INFO - \U0001f4e5 Status code: 200
+2025-06-24 15:16:52,703 - INFO - \U0001f50d Produtos retornados: 0
+2025-06-24 15:16:52,703 - INFO - \U0001f50d Produtos retornados: 0
+2025-06-24 15:16:52,704 - WARNING - \u26a0\ufe0f Nenhum produto retornado. Encerrando.
+2025-06-24 15:16:52,704 - INFO - \U0001f3c1 Sincronização concluída com 1921 produtos inseridos/atualizados.

@@ -20,9 +20,7 @@ def buscar_produtos(pagina=1):
 
     params = {
         "limit": 100,
-        "pagina": pagina,
-        "filters": "tipo[PS];criterio[2]",
-        "filtroSaldoEstoque": 1
+        "pagina": pagina
     }
 
     logger.info(f"📡 Requisição -> página={pagina}")

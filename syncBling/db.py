@@ -21,39 +21,51 @@ def criar_tabela(cursor):
             codigo VARCHAR(255),
             nome VARCHAR(255),
             preco DECIMAL(10,2),
-            saldovirtualtotal DECIMAL(10,2)
+            saldovirtualtotal DECIMAL(10,2),
+            tipo VARCHAR(45),
+            situacao VARCHAR(45),
+            formato VARCHAR(45)
         )
     """)
 
 def inserir_ou_atualizar(cursor, produto, conn):
     try:
-        cursor.execute("SELECT codigo, nome, preco, saldovirtualtotal FROM produto WHERE id = %s", (produto["id"],))
+        cursor.execute("SELECT codigo, nome, preco, saldovirtualtotal, tipo, situacao, formato FROM produto WHERE id = %s", (produto["id"],))
         resultado = cursor.fetchone()
 
         if resultado:
-            codigo, nome, preco, saldo = resultado
+            codigo, nome, preco, saldo, tipo, situacao, formato = resultado
             if (
                 codigo == produto["codigo"] and
                 nome == produto["nome"] and
                 float(preco) == float(produto["preco"]) and
-                float(saldo) == float(produto["saldovirtualtotal"])
+                float(saldo) == float(produto["saldovirtualtotal"]) and
+                tipo == produto["tipo"] and
+                situacao == produto["situacao"] and
+                formato == produto["formato"]
             ):
                 return False  # Nenhuma alteração
 
         cursor.execute("""
-            INSERT INTO produto (id, codigo, nome, preco, saldovirtualtotal)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO produto (id, codigo, nome, preco, saldovirtualtotal, tipo, situacao, formato)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 codigo = VALUES(codigo),
                 nome = VALUES(nome),
                 preco = VALUES(preco),
-                saldovirtualtotal = VALUES(saldovirtualtotal)
+                saldovirtualtotal = VALUES(saldovirtualtotal),
+                tipo = VALUES(tipo),
+                situacao = VALUES(situacao),
+                formato = VALUES(formato)
         """, (
             produto["id"],
             produto["codigo"],
             produto["nome"],
             produto["preco"],
-            produto["saldovirtualtotal"]
+            produto["saldovirtualtotal"],
+            produto["tipo"],
+            produto["situacao"],
+            produto["formato"]
         ))
         return True
     except Exception as e:
