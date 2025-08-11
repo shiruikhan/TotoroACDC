@@ -20,6 +20,12 @@ def _safe_float(value):
     except (TypeError, ValueError):
         return 0.0
 
+def _bool_env(name: str, default: bool = False) -> bool:
+    v = os.getenv(name)
+    if v is None:
+        return default
+    return v.strip().lower() in ("1", "true", "yes", "on")
+
 def conectar_mysql():
     host = os.getenv("DB_HOST")
     port = int(os.getenv("DB_PORT", "3306"))
@@ -27,22 +33,59 @@ def conectar_mysql():
     password = os.getenv("DB_PASSWORD")
     database = os.getenv("DB_NAME")
 
-    logger.info("Connecting to database host=%s port=%s db=%s user=%s", host, port, database, user)
-    logger.info("DB_PASSWORD length: %d", len(os.getenv("DB_PASSWORD") or ""))
+    # Diagnostic: driver options via env
+    # DB_USE_PURE=true|false (default true to avoid opaque C-extension error)
+    # DB_AUTH_PLUGIN= mysql_native_password | caching_sha2_password | ...
+    # DB_SSL_MODE= DISABLED | REQUIRED
+    # DB_SSL_CA= path to CA file (if provided, SSL will be enabled with this CA)
+    use_pure = _bool_env("DB_USE_PURE", True)
+    auth_plugin = os.getenv("DB_AUTH_PLUGIN")
+    ssl_mode = (os.getenv("DB_SSL_MODE") or "").upper()
+    ssl_ca = os.getenv("DB_SSL_CA")
+
+    params = dict(
+        host=host,
+        port=port,
+        user=user,
+        password=password,
+        database=database,
+        connection_timeout=10,
+        use_pure=use_pure,
+    )
+
+    if auth_plugin:
+        params["auth_plugin"] = auth_plugin
+
+    if ssl_mode == "DISABLED":
+        params["ssl_disabled"] = True
+    elif ssl_ca:
+        params["ssl_ca"] = ssl_ca
+    elif ssl_mode == "REQUIRED":
+        # When required but no CA provided, let connector negotiate default SSL
+        # (server must present certificate trusted by OS store)
+        pass
+
+    logger.info(
+        "Connecting to database host=%s port=%s db=%s user=%s use_pure=%s auth_plugin=%s ssl_mode=%s ssl_ca=%s",
+        host, port, database, user, use_pure, auth_plugin or "-", ssl_mode or "-", "set" if ssl_ca else "-"
+    )
+
     try:
-        conn = mysql.connector.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=password,
-            database=database,
-            connection_timeout=10,
-        )
+        conn = mysql.connector.connect(**params)
         logger.info("Database connection established")
         return conn
     except MySQLError as e:
-        # mysql-connector sometimes raises opaque messages; log parameters to help
-        logger.exception("Database connection failed")
+        # Log rich diagnostics without secrets
+        try:
+            err_no = getattr(e, "errno", None)
+            sqlstate = getattr(e, "sqlstate", None)
+            msg = getattr(e, "msg", str(e))
+            logger.error("MySQL error errno=%s sqlstate=%s msg=%s", err_no, sqlstate, msg)
+        except Exception:
+            logger.exception("Unexpected error object while logging MySQL error")
+        raise
+    except Exception:
+        logger.exception("Database connection failed with non-MySQL error")
         raise
 
 def criar_tabela(cursor):

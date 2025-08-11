@@ -127,3 +127,102 @@ Traceback (most recent call last):
     self._cmysql.connect(**cnx_kwargs)
     ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
 RuntimeError: Failed raising error.
+2025-08-11 09:38:30,821 - INFO - Running main.py directly
+2025-08-11 09:38:30,821 - INFO - Starting synchronization with Bling
+2025-08-11 09:38:30,821 - INFO - Connecting to database
+2025-08-11 09:38:30,821 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti use_pure=True auth_plugin=- ssl_mode=- ssl_ca=-
+2025-08-11 09:38:31,441 - INFO - package: mysql.connector.plugins
+2025-08-11 09:38:31,441 - INFO - plugin_name: mysql_native_password
+2025-08-11 09:38:31,443 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-08-11 09:38:31,855 - INFO - Database connection established
+2025-08-11 09:38:31,992 - INFO - Creating table if not exists
+2025-08-11 09:38:32,130 - INFO - Fetching products page=1
+2025-08-11 09:38:32,130 - INFO - Request products page=1
+2025-08-11 09:38:32,614 - INFO - Products API status code: 200
+2025-08-11 09:38:32,615 - INFO - Products returned: 100
+2025-08-11 09:38:32,615 - INFO - First product name: PLACA AJUSTE DUPLO VOLT/AMP PRO PFC 12V
+2025-08-11 09:38:32,615 - INFO - Items received: 100
+2025-08-11 09:39:00,473 - INFO - Commit page results to database
+2025-08-11 09:39:01,115 - INFO - Fetching products page=2
+2025-08-11 09:39:01,115 - INFO - Request products page=2
+2025-08-11 09:39:01,549 - INFO - Products API status code: 200
+2025-08-11 09:39:01,550 - INFO - Products returned: 100
+2025-08-11 09:39:01,550 - INFO - First product name: REBITE PLASTICO 4,3MM
+2025-08-11 09:39:01,550 - INFO - Items received: 100
+2025-08-11 09:39:30,713 - INFO - Commit page results to database
+2025-08-11 09:39:31,350 - INFO - Fetching products page=3
+2025-08-11 09:39:31,351 - INFO - Request products page=3
+2025-08-11 09:39:31,876 - INFO - Products API status code: 200
+2025-08-11 09:39:31,877 - INFO - Products returned: 100
+2025-08-11 09:39:31,877 - INFO - First product name: CAPACITOR ELETROLÍTICO 470UF 400V
+2025-08-11 09:39:31,877 - INFO - Items received: 100
+2025-08-11 09:40:00,652 - INFO - Commit page results to database
+2025-08-11 09:40:01,290 - INFO - Fetching products page=4
+2025-08-11 09:40:01,290 - INFO - Request products page=4
+2025-08-11 09:40:01,799 - INFO - Products API status code: 200
+2025-08-11 09:40:01,800 - INFO - Products returned: 100
+2025-08-11 09:40:01,800 - INFO - First product name: RESISTOR SMD 0R15 1W 2512
+2025-08-11 09:40:01,800 - INFO - Items received: 100
+2025-08-11 09:40:30,983 - INFO - Commit page results to database
+2025-08-11 09:40:31,620 - INFO - Fetching products page=5
+2025-08-11 09:40:31,620 - INFO - Request products page=5
+2025-08-11 09:40:32,177 - INFO - Products API status code: 200
+2025-08-11 09:40:32,178 - INFO - Products returned: 100
+2025-08-11 09:40:32,178 - INFO - First product name: RESISTOR 1W 82R
+2025-08-11 09:40:32,178 - INFO - Items received: 100
+2025-08-11 09:41:00,796 - INFO - Commit page results to database
+2025-08-11 09:41:01,441 - INFO - Fetching products page=6
+2025-08-11 09:41:01,441 - INFO - Request products page=6
+2025-08-11 09:41:01,891 - INFO - Products API status code: 200
+2025-08-11 09:41:01,891 - INFO - Products returned: 100
+2025-08-11 09:41:01,891 - INFO - First product name: CAPACITOR ELETROLITICO 220uF 200V 105° ARAME - EPCOS
+2025-08-11 09:41:01,891 - INFO - Items received: 100
+2025-08-11 09:41:29,834 - INFO - Commit page results to database
+2025-08-11 09:41:30,475 - INFO - Fetching products page=7
+2025-08-11 09:41:30,475 - INFO - Request products page=7
+2025-08-11 09:41:30,965 - INFO - Products API status code: 200
+2025-08-11 09:41:30,966 - INFO - Products returned: 100
+2025-08-11 09:41:30,966 - INFO - First product name: TRANSISTOR PTH K13A65U ( FQP13A65U / MDF13N50B)
+2025-08-11 09:41:30,966 - INFO - Items received: 100
+2025-08-11 09:41:58,535 - INFO - Commit page results to database
+2025-08-11 09:41:59,173 - INFO - Fetching products page=8
+2025-08-11 09:41:59,173 - INFO - Request products page=8
+2025-08-11 09:41:59,748 - INFO - Products API status code: 200
+2025-08-11 09:41:59,749 - INFO - Products returned: 100
+2025-08-11 09:41:59,749 - INFO - First product name: CIRCUITO INTEGRADO MM74HC SMD
+2025-08-11 09:41:59,749 - INFO - Items received: 100
+2025-08-11 09:42:28,003 - INFO - Commit page results to database
+2025-08-11 09:42:28,640 - INFO - Fetching products page=9
+2025-08-11 09:42:28,640 - INFO - Request products page=9
+2025-08-11 09:42:29,057 - INFO - Products API status code: 200
+2025-08-11 09:42:29,057 - INFO - Products returned: 100
+2025-08-11 09:42:29,057 - INFO - First product name: TRIMPOT 3006P 200K "
+2025-08-11 09:42:29,057 - INFO - Items received: 100
+2025-08-11 09:42:57,881 - INFO - Commit page results to database
+2025-08-11 09:42:58,519 - INFO - Fetching products page=10
+2025-08-11 09:42:58,519 - INFO - Request products page=10
+2025-08-11 09:42:58,927 - INFO - Products API status code: 200
+2025-08-11 09:42:58,927 - INFO - Products returned: 100
+2025-08-11 09:42:58,927 - INFO - First product name: RESISTOR 120R 1W 5% "
+2025-08-11 09:42:58,927 - INFO - Items received: 100
+2025-08-11 09:43:27,851 - INFO - Commit page results to database
+2025-08-11 09:43:28,489 - INFO - Fetching products page=11
+2025-08-11 09:43:28,490 - INFO - Request products page=11
+2025-08-11 09:43:28,894 - INFO - Products API status code: 200
+2025-08-11 09:43:28,894 - INFO - Products returned: 100
+2025-08-11 09:43:28,894 - INFO - First product name: RESISTOR CR25 82R "
+2025-08-11 09:43:28,895 - INFO - Items received: 100
+2025-08-11 09:43:56,548 - INFO - Commit page results to database
+2025-08-11 09:43:57,186 - INFO - Fetching products page=12
+2025-08-11 09:43:57,186 - INFO - Request products page=12
+2025-08-11 09:43:57,630 - INFO - Products API status code: 200
+2025-08-11 09:43:57,630 - INFO - Products returned: 100
+2025-08-11 09:43:57,630 - INFO - First product name: RESISTOR 3W 82R "
+2025-08-11 09:43:57,630 - INFO - Items received: 100
+2025-08-11 09:44:25,267 - INFO - Commit page results to database
+2025-08-11 09:44:25,904 - INFO - Fetching products page=13
+2025-08-11 09:44:25,905 - INFO - Request products page=13
+2025-08-11 09:44:26,377 - INFO - Products API status code: 200
+2025-08-11 09:44:26,377 - INFO - Products returned: 100
+2025-08-11 09:44:26,377 - INFO - First product name: DIODO ZENER 5W 4V7 - 1N5337 "
+2025-08-11 09:44:26,377 - INFO - Items received: 100
