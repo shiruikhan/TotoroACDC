@@ -1,85 +1,22 @@
 from logger import logger
+import mysql.connector
 import os
 from dotenv import load_dotenv
-import mysql.connector
-from mysql.connector import Error as MySQLError
-from decimal import Decimal
 
 load_dotenv()
 
-def _safe_float(value):
-    if value is None:
-        return 0.0
-    if isinstance(value, (int, float)):
-        return float(value)
-    if isinstance(value, Decimal):
-        return float(value)
-    s = str(value).strip().replace(",", ".")
-    try:
-        return float(s)
-    except (TypeError, ValueError):
-        return 0.0
-
 def conectar_mysql():
-    host = os.getenv("DB_HOST")
-    port = int(os.getenv("DB_PORT", "3306"))
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWORD")
-    database = os.getenv("DB_NAME")
-
-    # Optional diagnostics via env
-    # DB_AUTH_PLUGIN= mysql_native_password | caching_sha2_password | ...
-    # DB_SSL_MODE= DISABLED | REQUIRED
-    # DB_SSL_CA= path to CA file (if provided, SSL will be enabled with this CA)
-    auth_plugin = os.getenv("DB_AUTH_PLUGIN")
-    ssl_mode = (os.getenv("DB_SSL_MODE") or "").upper()
-    ssl_ca = os.getenv("DB_SSL_CA")
-
-    # Consolidated: use_pure fixed to True
-    params = dict(
-        host=host,
-        port=port,
-        user=user,
-        password=password,
-        database=database,
-        connection_timeout=10,
-        use_pure=True,
+    logger.info(f"Conectado ao banco: {os.getenv('DB_NAME')}")
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        database=os.getenv("DB_NAME")
     )
-
-    if auth_plugin:
-        params["auth_plugin"] = auth_plugin
-
-    if ssl_mode == "DISABLED":
-        params["ssl_disabled"] = True
-    elif ssl_ca:
-        params["ssl_ca"] = ssl_ca
-    elif ssl_mode == "REQUIRED":
-        pass  # allow default SSL negotiation
-
-    logger.info(
-        "Connecting to database host=%s port=%s db=%s user=%s use_pure=%s auth_plugin=%s ssl_mode=%s ssl_ca=%s",
-        host, port, database, user, True, auth_plugin or "-", ssl_mode or "-", "set" if ssl_ca else "-"
-    )
-
-    try:
-        conn = mysql.connector.connect(**params)
-        logger.info("Database connection established")
-        return conn
-    except MySQLError as e:
-        try:
-            err_no = getattr(e, "errno", None)
-            sqlstate = getattr(e, "sqlstate", None)
-            msg = getattr(e, "msg", str(e))
-            logger.error("MySQL error errno=%s sqlstate=%s msg=%s", err_no, sqlstate, msg)
-        except Exception:
-            logger.exception("Unexpected error object while logging MySQL error")
-        raise
-    except Exception:
-        logger.exception("Database connection failed with non-MySQL error")
-        raise
 
 def criar_tabela(cursor):
-    cursor.execute("""            CREATE TABLE IF NOT EXISTS temp_produtos_bling (
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS temp_produtos_bling (
             id_bling BIGINT PRIMARY KEY,
             codigo VARCHAR(255),
             nome VARCHAR(255),
@@ -89,31 +26,28 @@ def criar_tabela(cursor):
             situacao VARCHAR(45),
             formato VARCHAR(45)
         )
-    """        )
+    """)
 
 def inserir_ou_atualizar(cursor, produto, conn):
     try:
-        cursor.execute(
-            "SELECT codigo, nome, preco, estoque, tipo, situacao, formato FROM temp_produtos_bling WHERE id_bling = %s",
-            (produto["id_bling"],),
-        )
+        cursor.execute("SELECT codigo, nome, preco, estoque, tipo, situacao, formato FROM temp_produtos_bling WHERE codigo = %s", (produto["id"],))
         resultado = cursor.fetchone()
 
         if resultado:
             codigo, nome, preco, saldo, tipo, situacao, formato = resultado
             if (
-                codigo == produto.get("codigo")
-                and nome == produto.get("nome")
-                and _safe_float(preco) == _safe_float(produto.get("preco"))
-                and _safe_float(saldo) == _safe_float(produto.get("estoque"))
-                and tipo == produto.get("tipo")
-                and situacao == produto.get("situacao")
-                and formato == produto.get("formato")
+                codigo == produto["codigo"] and
+                nome == produto["nome"] and
+                float(preco) == float(produto["preco"]) and
+                float(saldo) == float(produto["estoque"]) and
+                tipo == produto["tipo"] and
+                situacao == produto["situacao"] and
+                formato == produto["formato"]
             ):
-                return False  # no change
+                return False  # Nenhuma alteração
 
-        cursor.execute(
-            """                INSERT INTO temp_produtos_bling (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato)
+        cursor.execute("""
+            INSERT INTO temp_produtos_bling (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON DUPLICATE KEY UPDATE
                 codigo = VALUES(codigo),
@@ -123,19 +57,17 @@ def inserir_ou_atualizar(cursor, produto, conn):
                 tipo = VALUES(tipo),
                 situacao = VALUES(situacao),
                 formato = VALUES(formato)
-            """,                (
-                produto["id_bling"],
-                produto.get("codigo"),
-                produto.get("nome"),
-                _safe_float(produto.get("preco")),
-                _safe_float(produto.get("estoque")),
-                produto.get("tipo"),
-                produto.get("situacao"),
-                produto.get("formato"),
-            ),
-        )
+        """, (
+            produto["id_bling"],
+            produto["codigo"],
+            produto["nome"],
+            produto["preco"],
+            produto["estoque"],
+            produto["tipo"],
+            produto["situacao"],
+            produto["formato"]
+        ))
         return True
-    except Exception:
-        pid = produto.get("id_bling")
-        logger.exception("Insert or update failed for product id=%s", pid)
+    except Exception as e:
+        logger.error(f"[ERRO] Falha ao inserir/atualizar produto ID={produto['id_bling']}: {e}")
         return False
