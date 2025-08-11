@@ -226,3 +226,49 @@ RuntimeError: Failed raising error.
 2025-08-11 09:44:26,377 - INFO - Products returned: 100
 2025-08-11 09:44:26,377 - INFO - First product name: DIODO ZENER 5W 4V7 - 1N5337 "
 2025-08-11 09:44:26,377 - INFO - Items received: 100
+2025-08-11 09:44:55,049 - INFO - Commit page results to database
+2025-08-11 09:44:55,687 - INFO - Fetching products page=14
+2025-08-11 09:44:55,687 - INFO - Request products page=14
+2025-08-11 09:44:56,109 - INFO - Products API status code: 200
+2025-08-11 09:44:56,109 - INFO - Products returned: 100
+2025-08-11 09:44:56,109 - INFO - First product name: Trimpot 3296W 200R (201) "
+2025-08-11 09:44:56,109 - INFO - Items received: 100
+2025-08-11 09:45:23,775 - INFO - Commit page results to database
+2025-08-11 09:45:24,413 - INFO - Fetching products page=15
+2025-08-11 09:45:24,413 - INFO - Request products page=15
+2025-08-11 09:45:24,877 - INFO - Products API status code: 200
+2025-08-11 09:45:24,877 - INFO - Products returned: 100
+2025-08-11 09:45:24,877 - INFO - First product name: CAPACITOR ELETROLÍTICO 4700UF 63V 105° ARAME
+2025-08-11 09:45:24,878 - INFO - Items received: 100
+2025-08-11 09:45:53,562 - INFO - Commit page results to database
+2025-08-11 09:45:54,200 - INFO - Fetching products page=16
+2025-08-11 09:45:54,200 - INFO - Request products page=16
+2025-08-11 09:45:54,548 - INFO - Products API status code: 200
+2025-08-11 09:45:54,548 - INFO - Products returned: 34
+2025-08-11 09:45:54,548 - INFO - First product name: RESISTOR PTH 10R 5% (R20)
+2025-08-11 09:45:54,548 - INFO - Items received: 34
+2025-08-11 09:46:04,045 - INFO - Commit page results to database
+2025-08-11 09:46:04,684 - INFO - Fetching products page=17
+2025-08-11 09:46:04,684 - INFO - Request products page=17
+2025-08-11 09:46:05,034 - INFO - Products API status code: 200
+2025-08-11 09:46:05,034 - INFO - Products returned: 0
+2025-08-11 09:46:05,034 - INFO - Items received: 0
+2025-08-11 09:46:05,034 - WARNING - No products returned. Stopping
+2025-08-11 09:46:05,035 - INFO - Synchronization finished. Total inserted or updated: 1534
+2025-08-11 09:47:58,513 - INFO - Running main.py directly
+2025-08-11 09:47:58,514 - INFO - Starting synchronization with Bling
+2025-08-11 09:47:58,515 - INFO - Connecting to database
+2025-08-11 09:47:58,515 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti use_pure=True auth_plugin=- ssl_mode=- ssl_ca=-
+2025-08-11 09:47:59,136 - INFO - package: mysql.connector.plugins
+2025-08-11 09:47:59,136 - INFO - plugin_name: mysql_native_password
+2025-08-11 09:47:59,137 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
+2025-08-11 09:47:59,550 - INFO - Database connection established
+2025-08-11 09:47:59,687 - INFO - Creating table if not exists
+2025-08-11 09:47:59,826 - INFO - Fetching products page=1
+2025-08-11 09:47:59,826 - INFO - Request products page=1
+2025-08-11 09:48:00,123 - WARNING - Token expired. Attempting refresh
+2025-08-11 09:48:00,414 - ERROR - Token refresh failed. Status: 400 Body: {"error":{"type":"invalid_client","message":"invalid_client","description":"Client credentials were not found in the headers"}}
+2025-08-11 09:48:00,414 - ERROR - Token refresh failed
+2025-08-11 09:48:00,414 - INFO - Items received: 0
+2025-08-11 09:48:00,414 - WARNING - No products returned. Stopping
+2025-08-11 09:48:00,414 - INFO - Synchronization finished. Total inserted or updated: 0

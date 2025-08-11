@@ -20,12 +20,6 @@ def _safe_float(value):
     except (TypeError, ValueError):
         return 0.0
 
-def _bool_env(name: str, default: bool = False) -> bool:
-    v = os.getenv(name)
-    if v is None:
-        return default
-    return v.strip().lower() in ("1", "true", "yes", "on")
-
 def conectar_mysql():
     host = os.getenv("DB_HOST")
     port = int(os.getenv("DB_PORT", "3306"))
@@ -33,16 +27,15 @@ def conectar_mysql():
     password = os.getenv("DB_PASSWORD")
     database = os.getenv("DB_NAME")
 
-    # Diagnostic: driver options via env
-    # DB_USE_PURE=true|false (default true to avoid opaque C-extension error)
+    # Optional diagnostics via env
     # DB_AUTH_PLUGIN= mysql_native_password | caching_sha2_password | ...
     # DB_SSL_MODE= DISABLED | REQUIRED
     # DB_SSL_CA= path to CA file (if provided, SSL will be enabled with this CA)
-    use_pure = _bool_env("DB_USE_PURE", True)
     auth_plugin = os.getenv("DB_AUTH_PLUGIN")
     ssl_mode = (os.getenv("DB_SSL_MODE") or "").upper()
     ssl_ca = os.getenv("DB_SSL_CA")
 
+    # Consolidated: use_pure fixed to True
     params = dict(
         host=host,
         port=port,
@@ -50,7 +43,7 @@ def conectar_mysql():
         password=password,
         database=database,
         connection_timeout=10,
-        use_pure=use_pure,
+        use_pure=True,
     )
 
     if auth_plugin:
@@ -61,13 +54,11 @@ def conectar_mysql():
     elif ssl_ca:
         params["ssl_ca"] = ssl_ca
     elif ssl_mode == "REQUIRED":
-        # When required but no CA provided, let connector negotiate default SSL
-        # (server must present certificate trusted by OS store)
-        pass
+        pass  # allow default SSL negotiation
 
     logger.info(
         "Connecting to database host=%s port=%s db=%s user=%s use_pure=%s auth_plugin=%s ssl_mode=%s ssl_ca=%s",
-        host, port, database, user, use_pure, auth_plugin or "-", ssl_mode or "-", "set" if ssl_ca else "-"
+        host, port, database, user, True, auth_plugin or "-", ssl_mode or "-", "set" if ssl_ca else "-"
     )
 
     try:
@@ -75,7 +66,6 @@ def conectar_mysql():
         logger.info("Database connection established")
         return conn
     except MySQLError as e:
-        # Log rich diagnostics without secrets
         try:
             err_no = getattr(e, "errno", None)
             sqlstate = getattr(e, "sqlstate", None)
