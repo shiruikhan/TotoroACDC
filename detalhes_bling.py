@@ -1,14 +1,9 @@
-import os
-import time
 from typing import Any
 from dotenv import load_dotenv
 from logger import logger
 from bling_api import buscar_detalhe_produto
 
 load_dotenv()
-
-DETAILS_DELAY = float(os.getenv("DETAILS_DELAY", "0.3"))
-FILA_RETRY: set[int] = set()
 
 def _num(x: Any) -> float:
     if x is None:
@@ -28,10 +23,10 @@ def _extract_details(data: dict) -> dict:
     peso_liquido = _num(pesos.get("liquido") or pesos.get("pesoLiquido") or data.get("peso_liquido"))
     peso_bruto = _num(pesos.get("bruto") or pesos.get("pesoBruto") or data.get("peso_bruto"))
 
+    # IMAGEM: midia > imagens > internas[0].link -> externas[0].link -> imagensURL[0]
     imagem = None
     midia = data.get("midia") or {}
     imgs = (midia.get("imagens") or {})
-
     internas = imgs.get("internas") or []
     externas = imgs.get("externas") or []
     imagens_url = imgs.get("imagensURL") or []
@@ -72,7 +67,6 @@ def _extract_details(data: dict) -> dict:
 def update_product_details(cursor, id_bling: int, table_name: str = "temp_produtos_bling") -> bool:
     detail = buscar_detalhe_produto(id_bling)
     if not detail:
-        FILA_RETRY.add(int(id_bling))
         return False
 
     fields = _extract_details(detail)
@@ -100,7 +94,6 @@ def update_product_details(cursor, id_bling: int, table_name: str = "temp_produt
     )
     try:
         cursor.execute(sql, params)
-        time.sleep(DETAILS_DELAY)
         return True
     except Exception as e:
         logger.error("Falha ao atualizar detalhes (%s): %s", id_bling, e)

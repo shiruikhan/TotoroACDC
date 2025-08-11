@@ -1,12 +1,12 @@
 from logger import logger
-import time
 import os
 import db
 from bling_api import buscar_produtos
-from detalhes_bling import update_product_details, FILA_RETRY
+from detalhes_bling import update_product_details
 
-DETALHE_GAP = float(os.getenv("DETAILS_DELAY", "0.3"))
-RETRY_FINAL_DELAY = 2.0
+# Quantas horas até considerar "stale" e buscar detalhes novamente
+DETAILS_MAX_AGE_HOURS = int(os.getenv("DETAILS_MAX_AGE_HOURS", "168"))  # 7 dias
+BUSCA_LIMITE = int(os.getenv("BUSCA_LIMITE", "100"))  # itens por página
 
 def _safe_float(value):
     if value is None:
@@ -36,44 +36,52 @@ def _mapear_produto(p: dict) -> dict:
 
 def main():
     try:
-        logger.info("Iniciando sincronização com Bling...")
+        logger.warning("Iniciando sincronização com Bling...")  # aparece mesmo com LOG_LEVEL=WARNING
         conn = db.conectar_mysql()
         cursor = conn.cursor()
 
         total_processados = 0
         total_upserts = 0
+        total_det_ok = 0
+        total_det_skip = 0
+        total_det_fail = 0
 
         pagina = 1
         while True:
-            produtos_api = buscar_produtos(pagina=pagina, limite=100)
+            produtos_api = buscar_produtos(pagina=pagina, limite=BUSCA_LIMITE)
             if not produtos_api:
                 break
 
-            for p in produtos_api:
-                mp = _mapear_produto(p)
-                if not mp["id_bling"]:
-                    continue
+            # Mapeia e faz upsert em lote
+            mapeados = [_mapear_produto(p) for p in produtos_api if (p.get("id") or p.get("idBling"))]
+            total_processados += len(mapeados)
 
-                if db.inserir_ou_atualizar(cursor, mp):
-                    total_upserts += 1
-                    update_product_details(cursor, mp["id_bling"])
-                    time.sleep(DETALHE_GAP)
-                total_processados += 1
+            afetados = db.upsert_batch(cursor, mapeados)
+            conn.commit()
+            total_upserts += afetados
 
-            logger.info("Página %s processada. Upserts acumulados: %s", pagina, total_upserts)
+            # Detalhes somente quando necessário
+            for mp in mapeados:
+                ib = mp["id_bling"]
+                try:
+                    if db.needs_details(cursor, ib, DETAILS_MAX_AGE_HOURS):
+                        ok = update_product_details(cursor, ib)
+                        if ok:
+                            total_det_ok += 1
+                        else:
+                            total_det_fail += 1
+                    else:
+                        total_det_skip += 1
+                except Exception:
+                    total_det_fail += 1
+
+            conn.commit()  # commit após detalhes da página
+
             pagina += 1
-            time.sleep(0.5)
 
-        if FILA_RETRY:
-            logger.warning("Reprocessando detalhes pendentes: %s itens", len(FILA_RETRY))
-            for id_bling in list(FILA_RETRY):
-                time.sleep(RETRY_FINAL_DELAY)
-                if update_product_details(cursor, id_bling):
-                    FILA_RETRY.discard(id_bling)
-
-        logger.info(
-            "Finalizado. Processados: %s | Inseridos/Atualizados: %s | Pendentes detalhe: %s",
-            total_processados, total_upserts, len(FILA_RETRY)
+        logger.warning(
+            "Finalizado. Processados=%s | Upserts=%s | Detalhes ok=%s | Detalhes pulados=%s | Detalhes falha=%s",
+            total_processados, total_upserts, total_det_ok, total_det_skip, total_det_fail
         )
         cursor.close()
         conn.close()

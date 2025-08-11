@@ -66,6 +66,7 @@ def buscar_produtos(pagina: int = 1, limite: int = 100) -> list[dict]:
         logger.error("Resposta /produtos não é JSON.")
         return []
     produtos = data.get("data") or []
+    # Em WARNING por padrão não polui; suba pra INFO se quiser ver páginas
     logger.info("Página %s: %s produtos", pagina, len(produtos))
     return produtos
 
