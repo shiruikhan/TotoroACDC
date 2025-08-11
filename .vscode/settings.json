@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "108.167.132.218",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "Banco ACDC",
+            "group": "ACDC",
+            "database": "acdcco13_banquinho",
+            "username": "acdcco13_ti",
+            "password": "*Spark1010"
+        }
+    ]
+}
