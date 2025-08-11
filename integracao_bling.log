@@ -3,3 +3,127 @@
 2025-08-11 09:00:18,234 - INFO - Conectando ao banco de dados...
 2025-08-11 09:00:18,234 - INFO - Conectado ao banco: acdcco13_banquinho
 2025-08-11 09:00:18,962 - CRITICAL - Erro fatal na execu��o: Failed raising error.
+2025-08-11 09:18:05,801 - INFO - Executando main.py diretamente
+2025-08-11 09:18:05,801 - INFO - Iniciando sincronizacao com o Bling
+2025-08-11 09:18:05,801 - INFO - Conectando ao banco de dados
+2025-08-11 09:18:06,541 - ERROR - Erro ao conectar ao banco de dados
+Traceback (most recent call last):
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 27, in conectar_mysql
+    conn = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+    ...<3 lines>...
+        database=os.getenv("DB_NAME"),
+    )
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+RuntimeError: Failed raising error.
+2025-08-11 09:18:06,546 - ERROR - Erro fatal na execucao
+Traceback (most recent call last):
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
+    conn = conectar_mysql()
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 27, in conectar_mysql
+    conn = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+    ...<3 lines>...
+        database=os.getenv("DB_NAME"),
+    )
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+RuntimeError: Failed raising error.
+2025-08-11 09:25:44,605 - INFO - Running main.py directly
+2025-08-11 09:25:44,605 - INFO - Starting synchronization with Bling
+2025-08-11 09:25:44,605 - INFO - Connecting to database
+2025-08-11 09:25:44,605 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
+2025-08-11 09:25:45,348 - ERROR - Fatal error during execution
+Traceback (most recent call last):
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
+    conn = conectar_mysql()
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 32, in conectar_mysql
+    conn = mysql.connector.connect(
+        host=host,
+    ...<4 lines>...
+        connection_timeout=10,
+    )
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+RuntimeError: Failed raising error.
+2025-08-11 09:26:43,486 - INFO - Running main.py directly
+2025-08-11 09:26:43,486 - INFO - Starting synchronization with Bling
+2025-08-11 09:26:43,486 - INFO - Connecting to database
+2025-08-11 09:26:43,486 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
+2025-08-11 09:26:44,218 - ERROR - Fatal error during execution
+Traceback (most recent call last):
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
+    conn = conectar_mysql()
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 32, in conectar_mysql
+    conn = mysql.connector.connect(
+        host=host,
+    ...<4 lines>...
+        connection_timeout=10,
+    )
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+RuntimeError: Failed raising error.
+2025-08-11 09:31:12,958 - INFO - Running main.py directly
+2025-08-11 09:31:12,958 - INFO - Starting synchronization with Bling
+2025-08-11 09:31:12,958 - INFO - Connecting to database
+2025-08-11 09:31:12,958 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
+2025-08-11 09:31:12,958 - INFO - DB_PASSWORD length: 10
+2025-08-11 09:31:13,696 - ERROR - Fatal error during execution
+Traceback (most recent call last):
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
+    conn = conectar_mysql()
+  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 33, in conectar_mysql
+    conn = mysql.connector.connect(
+        host=host,
+    ...<4 lines>...
+        connection_timeout=10,
+    )
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
+    return CMySQLConnection(*args, **kwargs)
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
+    self.connect(**kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
+    self._open_connection()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
+    self._cmysql.connect(**cnx_kwargs)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+RuntimeError: Failed raising error.

@@ -3,36 +3,47 @@ import time
 from bling_api import buscar_produtos
 from db import conectar_mysql, criar_tabela, inserir_ou_atualizar
 
+def _safe_float(value):
+    if value is None:
+        return 0.0
+    try:
+        return float(str(value).replace(",", "."))
+    except (ValueError, TypeError):
+        return 0.0
+
 def main():
     try:
-        logger.info("Iniciando sincronização com o Bling")
+        logger.info("Starting synchronization with Bling")
 
-        logger.info("Conectando ao banco de dados...")
+        logger.info("Connecting to database")
         conn = conectar_mysql()
         cursor = conn.cursor()
 
-        logger.info("Criando tabela (caso não exista)...")
+        logger.info("Creating table if not exists")
         criar_tabela(cursor)
 
         pagina = 1
         total_inseridos = 0
 
         while True:
-            logger.info(f"Buscando produtos | Página: {pagina}")
+            logger.info("Fetching products page=%s", pagina)
             produtos = buscar_produtos(pagina)
-            logger.info(f"Produtos retornados: {len(produtos)}")
+            logger.info("Items received: %s", len(produtos))
 
             if not produtos:
-                logger.warning("Nenhum produto retornado. Encerrando.")
+                logger.warning("No products returned. Stopping")
                 break
 
             for p in produtos:
+                estoque_dict = p.get("estoque") or {}
+                if not isinstance(estoque_dict, dict):
+                    estoque_dict = {}
                 produto_data = {
-                    "id_bling": int(p["id"]),
+                    "id_bling": int(p.get("id")) if p.get("id") is not None else 0,
                     "codigo": p.get("codigo"),
                     "nome": p.get("nome"),
-                    "preco": float(p.get("preco", 0)),
-                    "estoque": float(p.get("estoque", {}).get("saldoVirtualTotal", 0)),
+                    "preco": _safe_float(p.get("preco", 0)),
+                    "estoque": _safe_float(estoque_dict.get("saldoVirtualTotal", 0)),
                     "tipo": p.get("tipo"),
                     "situacao": p.get("situacao"),
                     "formato": p.get("formato"),
@@ -41,20 +52,20 @@ def main():
                 if inserido:
                     total_inseridos += 1
 
-            logger.info("Commitando alterações...")
+            logger.info("Commit page results to database")
             conn.commit()
 
             pagina += 1
             time.sleep(0.5)
 
-        logger.info(f"Sincronização concluída com {total_inseridos} produtos inseridos/atualizados.")
+        logger.info("Synchronization finished. Total inserted or updated: %s", total_inseridos)
 
         cursor.close()
         conn.close()
 
-    except Exception as e:
-        logger.critical(f"Erro fatal na execução: {e}")
+    except Exception:
+        logger.exception("Fatal error during execution")
 
 if __name__ == "__main__":
-    logger.info("Executando main.py diretamente")
+    logger.info("Running main.py directly")
     main()

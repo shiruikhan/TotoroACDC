@@ -15,34 +15,48 @@ def buscar_produtos(pagina=1):
 
     headers = {
         "Authorization": f"Bearer {token}",
-        "Accept": "application/json"
+        "Accept": "application/json",
     }
 
     params = {
         "limit": 100,
-        "pagina": pagina
+        "pagina": pagina,
     }
 
-    logger.info(f"Requisição -> página={pagina}")
-    response = requests.get(url, headers=headers, params=params)
+    logger.info("Request products page=%s", pagina)
+    try:
+        response = requests.get(url, headers=headers, params=params, timeout=30)
+    except requests.RequestException as e:
+        logger.error("Network error while calling products API: %s", str(e))
+        return []
 
     if response.status_code == 401:
-        logger.warning("Token expirado. Tentando renovar...")
+        logger.warning("Token expired. Attempting refresh")
         novo_token = renovar_token()
         if not novo_token:
-            raise Exception("Não foi possível renovar o token.")
+            logger.error("Token refresh failed")
+            return []
         headers["Authorization"] = f"Bearer {novo_token}"
-        response = requests.get(url, headers=headers, params=params)
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=30)
+        except requests.RequestException as e:
+            logger.error("Network error after token refresh: %s", str(e))
+            return []
 
-    logger.info(f"Status code: {response.status_code}")
+    logger.info("Products API status code: %s", response.status_code)
     if response.status_code == 200:
-        json_data = response.json()
+        try:
+            json_data = response.json()
+        except ValueError:
+            logger.error("Products API returned non JSON")
+            return []
         produtos = json_data.get("data", [])
-        logger.info(f"Produtos retornados: {len(produtos)}")
+        logger.info("Products returned: %s", len(produtos))
         if produtos:
-            logger.info(f"→ Primeiro produto: {produtos[0].get('nome')}")
+            primeiro_nome = produtos[0].get("nome")
+            if primeiro_nome:
+                logger.info("First product name: %s", primeiro_nome)
         return produtos
     else:
-        logger.error("Erro na resposta da API:")
-        logger.error(response.text)
+        logger.error("Products API error. Body: %s", response.text[:500])
         return []
