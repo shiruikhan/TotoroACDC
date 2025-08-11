@@ -28,7 +28,7 @@ def renovar_token():
         logger.info("Tokens atualizados com sucesso.")
         return access_token
     else:
-        logger.error("Erro ao renovar token:", response.status_code)
+        logger.error("Erro ao renovar token: %s", response.status_code)
         logger.info(response.text)
         return None
 

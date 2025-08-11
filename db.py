@@ -30,7 +30,7 @@ def criar_tabela(cursor):
 
 def inserir_ou_atualizar(cursor, produto, conn):
     try:
-        cursor.execute("SELECT codigo, nome, preco, estoque, tipo, situacao, formato FROM temp_produtos_bling WHERE id_bling = %s", (produto["id"],))
+        cursor.execute("SELECT codigo, nome, preco, estoque, tipo, situacao, formato FROM temp_produtos_bling WHERE id_bling = %s", (produto["id_bling"],))
         resultado = cursor.fetchone()
 
         if resultado:

@@ -28,11 +28,11 @@ def main():
 
             for p in produtos:
                 produto_data = {
-                    "id": int(p["id"]),
+                    "id_bling": int(p["id"]),
                     "codigo": p.get("codigo"),
                     "nome": p.get("nome"),
                     "preco": float(p.get("preco", 0)),
-                    "saldovirtualtotal": float(p.get("estoque", {}).get("saldoVirtualTotal", 0)),
+                    "estoque": float(p.get("estoque", {}).get("saldoVirtualTotal", 0)),
                     "tipo": p.get("tipo"),
                     "situacao": p.get("situacao"),
                     "formato": p.get("formato"),
