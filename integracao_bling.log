@@ -1,0 +1,5 @@
+2025-08-11 09:00:18,233 - INFO - Executando main.py diretamente
+2025-08-11 09:00:18,233 - INFO - Iniciando sincronização com o Bling
+2025-08-11 09:00:18,234 - INFO - Conectando ao banco de dados...
+2025-08-11 09:00:18,234 - INFO - Conectado ao banco: acdcco13_banquinho
+2025-08-11 09:00:18,962 - CRITICAL - Erro fatal na execução: Failed raising error.
