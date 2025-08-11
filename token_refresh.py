@@ -1,66 +1,67 @@
-import requests
 import os
+import requests
 from dotenv import load_dotenv
 from logger import logger
 
-ENV_PATH = ".env"
+ENV_PATH = os.getenv("ENV_PATH", ".env")
 load_dotenv(dotenv_path=ENV_PATH)
 
-def renovar_token():
-    url = "https://www.bling.com.br/Api/v3/oauth/token"
+TOKEN_URL = "https://www.bling.com.br/Api/v3/oauth/token"
+
+def _update_env_var(key: str, value: str) -> None:
+    os.environ[key] = value or ""
+    try:
+        try:
+            with open(ENV_PATH, "r", encoding="utf-8") as f:
+                lines = f.readlines()
+        except FileNotFoundError:
+            lines = []
+        found = False
+        for i, line in enumerate(lines):
+            if line.startswith(f"{key}="):
+                lines[i] = f"{key}={value}\n"
+                found = True
+                break
+        if not found:
+            lines.append(f"{key}={value}\n")
+        with open(ENV_PATH, "w", encoding="utf-8") as f:
+            f.writelines(lines)
+    except Exception as e:
+        logger.warning("Falha ao persistir %s no .env: %s", key, e)
+
+def renovar_token() -> str | None:
     payload = {
         "grant_type": "refresh_token",
         "refresh_token": os.getenv("BLING_REFRESH_TOKEN"),
         "client_id": os.getenv("BLING_CLIENT_ID"),
         "client_secret": os.getenv("BLING_CLIENT_SECRET"),
     }
-
     try:
-        response = requests.post(url, data=payload, timeout=30)
+        resp = requests.post(TOKEN_URL, data=payload, timeout=30)
     except requests.RequestException as e:
-        logger.error("Network error while refreshing token: %s", str(e))
+        logger.error("Erro de rede ao renovar token: %s", e)
         return None
 
-    if response.status_code == 200:
-        try:
-            tokens = response.json()
-        except ValueError:
-            logger.error("Token refresh returned non JSON")
-            return None
-
-        access_token = tokens.get("access_token")
-        refresh_token = tokens.get("refresh_token")
-
-        if not access_token or not refresh_token:
-            logger.error("Token refresh response missing fields")
-            return None
-
-        atualizar_env("BLING_ACCESS_TOKEN", access_token)
-        atualizar_env("BLING_REFRESH_TOKEN", refresh_token)
-
-        logger.info("Tokens updated successfully")
-        return access_token
-    else:
-        logger.error("Token refresh failed. Status: %s Body: %s", response.status_code, response.text[:500])
+    if resp.status_code != 200:
+        logger.error("Falha ao renovar token: HTTP %s - %s", resp.status_code, resp.text[:300])
         return None
 
-def atualizar_env(chave, novo_valor):
-    linhas = []
     try:
-        with open(ENV_PATH, "r", encoding="utf-8") as f:
-            linhas = f.readlines()
-    except FileNotFoundError:
-        linhas = []
+        data = resp.json()
+    except ValueError:
+        logger.error("Resposta de renovação de token não é JSON.")
+        return None
 
-    chave_existente = False
-    for i, linha in enumerate(linhas):
-        if linha.startswith(f"{chave}="):
-            linhas[i] = f"{chave}={novo_valor}\n"
-            chave_existente = True
-            break
+    access_token = data.get("access_token")
+    refresh_token = data.get("refresh_token")
 
-    if not chave_existente:
-        linhas.append(f"{chave}={novo_valor}\n")
+    if not access_token:
+        logger.error("Resposta de token sem access_token.")
+        return None
 
-    with open(ENV_PATH, "w", encoding="utf-8") as f:
-        f.writelines(linhas)
+    _update_env_var("BLING_ACCESS_TOKEN", access_token)
+    if refresh_token:
+        _update_env_var("BLING_REFRESH_TOKEN", refresh_token)
+
+    logger.info("Token do Bling renovado com sucesso.")
+    return access_token

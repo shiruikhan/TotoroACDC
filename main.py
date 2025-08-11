@@ -1,7 +1,12 @@
 from logger import logger
 import time
+import os
+import db
 from bling_api import buscar_produtos
-from db import conectar_mysql, criar_tabela, inserir_ou_atualizar
+from detalhes_bling import update_product_details, FILA_RETRY
+
+DETALHE_GAP = float(os.getenv("DETAILS_DELAY", "0.3"))
+RETRY_FINAL_DELAY = 2.0
 
 def _safe_float(value):
     if value is None:
@@ -11,61 +16,70 @@ def _safe_float(value):
     except (ValueError, TypeError):
         return 0.0
 
+def _safe_int(value):
+    try:
+        return int(float(str(value).replace(",", ".")))
+    except (ValueError, TypeError):
+        return 0
+
+def _mapear_produto(p: dict) -> dict:
+    return {
+        "id_bling": int(p.get("id") or p.get("idBling") or 0),
+        "codigo": p.get("codigo"),
+        "nome": p.get("nome"),
+        "preco": _safe_float(p.get("preco") or p.get("precoBase") or p.get("precoVenda")),
+        "estoque": _safe_int(p.get("estoque") or p.get("estoqueAtual") or 0),
+        "tipo": p.get("tipo"),
+        "situacao": (p.get("situacao") or p.get("status") or "")[:1],
+        "formato": p.get("formato"),
+    }
+
 def main():
     try:
-        logger.info("Starting synchronization with Bling")
-
-        logger.info("Connecting to database")
-        conn = conectar_mysql()
+        logger.info("Iniciando sincronização com Bling...")
+        conn = db.conectar_mysql()
         cursor = conn.cursor()
 
-        logger.info("Creating table if not exists")
-        criar_tabela(cursor)
+        total_processados = 0
+        total_upserts = 0
 
         pagina = 1
-        total_inseridos = 0
-
         while True:
-            logger.info("Fetching products page=%s", pagina)
-            produtos = buscar_produtos(pagina)
-            logger.info("Items received: %s", len(produtos))
-
-            if not produtos:
-                logger.warning("No products returned. Stopping")
+            produtos_api = buscar_produtos(pagina=pagina, limite=100)
+            if not produtos_api:
                 break
 
-            for p in produtos:
-                estoque_dict = p.get("estoque") or {}
-                if not isinstance(estoque_dict, dict):
-                    estoque_dict = {}
-                produto_data = {
-                    "id_bling": int(p.get("id")) if p.get("id") is not None else 0,
-                    "codigo": p.get("codigo"),
-                    "nome": p.get("nome"),
-                    "preco": _safe_float(p.get("preco", 0)),
-                    "estoque": _safe_float(estoque_dict.get("saldoVirtualTotal", 0)),
-                    "tipo": p.get("tipo"),
-                    "situacao": p.get("situacao"),
-                    "formato": p.get("formato"),
-                }
-                inserido = inserir_ou_atualizar(cursor, produto_data, conn)
-                if inserido:
-                    total_inseridos += 1
+            for p in produtos_api:
+                mp = _mapear_produto(p)
+                if not mp["id_bling"]:
+                    continue
 
-            logger.info("Commit page results to database")
-            conn.commit()
+                if db.inserir_ou_atualizar(cursor, mp):
+                    total_upserts += 1
+                    update_product_details(cursor, mp["id_bling"])
+                    time.sleep(DETALHE_GAP)
+                total_processados += 1
 
+            logger.info("Página %s processada. Upserts acumulados: %s", pagina, total_upserts)
             pagina += 1
             time.sleep(0.5)
 
-        logger.info("Synchronization finished. Total inserted or updated: %s", total_inseridos)
+        if FILA_RETRY:
+            logger.warning("Reprocessando detalhes pendentes: %s itens", len(FILA_RETRY))
+            for id_bling in list(FILA_RETRY):
+                time.sleep(RETRY_FINAL_DELAY)
+                if update_product_details(cursor, id_bling):
+                    FILA_RETRY.discard(id_bling)
 
+        logger.info(
+            "Finalizado. Processados: %s | Inseridos/Atualizados: %s | Pendentes detalhe: %s",
+            total_processados, total_upserts, len(FILA_RETRY)
+        )
         cursor.close()
         conn.close()
 
     except Exception:
-        logger.exception("Fatal error during execution")
+        logger.exception("Erro fatal durante a execução")
 
 if __name__ == "__main__":
-    logger.info("Running main.py directly")
     main()

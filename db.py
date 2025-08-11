@@ -1,73 +1,70 @@
-from logger import logger
-import mysql.connector
 import os
+from typing import Any
+import mysql.connector
 from dotenv import load_dotenv
+from logger import logger
 
 load_dotenv()
 
 def conectar_mysql():
-    logger.info(f"Conectado ao banco: {os.getenv('DB_NAME')}")
-    return mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASSWORD"),
-        database=os.getenv("DB_NAME")
-    )
+    cfg = {
+        "host": os.getenv("DB_HOST"),
+        "port": int(os.getenv("DB_PORT", "3306")),
+        "user": os.getenv("DB_USER"),
+        "password": os.getenv("DB_PASSWORD"),
+        "database": os.getenv("DB_NAME"),
+        "use_pure": True,
+        "connection_timeout": 10,
+    }
+    faltando = [k for k in ("host","user","password","database") if not cfg[k]]
+    if faltando:
+        raise RuntimeError(f"Variáveis de ambiente ausentes: {', '.join(faltando)}")
+    conn = mysql.connector.connect(**cfg)
+    conn.autocommit = True
+    logger.info("Conectado ao banco %s:%s/%s", cfg["host"], cfg["port"], cfg["database"])
+    return conn
 
-def criar_tabela(cursor):
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS temp_produtos_bling (
-            id_bling BIGINT PRIMARY KEY,
-            codigo VARCHAR(255),
-            nome VARCHAR(255),
-            preco DECIMAL(10,2),
-            estoque DECIMAL(10,2),
-            tipo VARCHAR(45),
-            situacao VARCHAR(45),
-            formato VARCHAR(45)
-        )
-    """)
-
-def inserir_ou_atualizar(cursor, produto, conn):
+def _to_float(value: Any) -> float:
+    if value is None:
+        return 0.0
     try:
-        cursor.execute("SELECT codigo, nome, preco, estoque, tipo, situacao, formato FROM temp_produtos_bling WHERE codigo = %s", (produto["id"],))
-        resultado = cursor.fetchone()
+        return float(str(value).replace(",", "."))
+    except (ValueError, TypeError):
+        return 0.0
 
-        if resultado:
-            codigo, nome, preco, saldo, tipo, situacao, formato = resultado
-            if (
-                codigo == produto["codigo"] and
-                nome == produto["nome"] and
-                float(preco) == float(produto["preco"]) and
-                float(saldo) == float(produto["estoque"]) and
-                tipo == produto["tipo"] and
-                situacao == produto["situacao"] and
-                formato == produto["formato"]
-            ):
-                return False  # Nenhuma alteração
+def _to_int(value: Any) -> int:
+    try:
+        return int(float(str(value).replace(",", ".")))
+    except (ValueError, TypeError):
+        return 0
 
-        cursor.execute("""
-            INSERT INTO temp_produtos_bling (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON DUPLICATE KEY UPDATE
-                codigo = VALUES(codigo),
-                nome = VALUES(nome),
-                preco = VALUES(preco),
-                estoque = VALUES(estoque),
-                tipo = VALUES(tipo),
-                situacao = VALUES(situacao),
-                formato = VALUES(formato)
-        """, (
-            produto["id_bling"],
-            produto["codigo"],
-            produto["nome"],
-            produto["preco"],
-            produto["estoque"],
-            produto["tipo"],
-            produto["situacao"],
-            produto["formato"]
-        ))
+def inserir_ou_atualizar(cursor, produto: dict) -> bool:
+    try:
+        sql = """
+        INSERT INTO temp_produtos_bling
+            (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+            codigo   = VALUES(codigo),
+            nome     = VALUES(nome),
+            preco    = VALUES(preco),
+            estoque  = VALUES(estoque),
+            tipo     = VALUES(tipo),
+            situacao = VALUES(situacao),
+            formato  = VALUES(formato)
+        """
+        params = (
+            int(produto["id_bling"]),
+            produto.get("codigo"),
+            (produto.get("nome") or "")[:255],
+            _to_float(produto.get("preco")),
+            _to_int(produto.get("estoque")),
+            produto.get("tipo"),
+            (produto.get("situacao") or "")[:1],
+            produto.get("formato"),
+        )
+        cursor.execute(sql, params)
         return True
     except Exception as e:
-        logger.error(f"[ERRO] Falha ao inserir/atualizar produto ID={produto['id_bling']}: {e}")
+        logger.error("Falha ao inserir/atualizar id_bling=%s: %s", produto.get("id_bling"), e)
         return False

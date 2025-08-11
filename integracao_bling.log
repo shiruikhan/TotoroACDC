@@ -1,481 +1,73 @@
-2025-08-11 09:00:18,233 - INFO - Executando main.py diretamente
-2025-08-11 09:00:18,233 - INFO - Iniciando sincroniza��o com o Bling
-2025-08-11 09:00:18,234 - INFO - Conectando ao banco de dados...
-2025-08-11 09:00:18,234 - INFO - Conectado ao banco: acdcco13_banquinho
-2025-08-11 09:00:18,962 - CRITICAL - Erro fatal na execu��o: Failed raising error.
-2025-08-11 09:18:05,801 - INFO - Executando main.py diretamente
-2025-08-11 09:18:05,801 - INFO - Iniciando sincronizacao com o Bling
-2025-08-11 09:18:05,801 - INFO - Conectando ao banco de dados
-2025-08-11 09:18:06,541 - ERROR - Erro ao conectar ao banco de dados
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 27, in conectar_mysql
-    conn = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-    ...<3 lines>...
-        database=os.getenv("DB_NAME"),
-    )
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 09:18:06,546 - ERROR - Erro fatal na execucao
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 27, in conectar_mysql
-    conn = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-    ...<3 lines>...
-        database=os.getenv("DB_NAME"),
-    )
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 09:25:44,605 - INFO - Running main.py directly
-2025-08-11 09:25:44,605 - INFO - Starting synchronization with Bling
-2025-08-11 09:25:44,605 - INFO - Connecting to database
-2025-08-11 09:25:44,605 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
-2025-08-11 09:25:45,348 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 32, in conectar_mysql
-    conn = mysql.connector.connect(
-        host=host,
-    ...<4 lines>...
-        connection_timeout=10,
-    )
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 09:26:43,486 - INFO - Running main.py directly
-2025-08-11 09:26:43,486 - INFO - Starting synchronization with Bling
-2025-08-11 09:26:43,486 - INFO - Connecting to database
-2025-08-11 09:26:43,486 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
-2025-08-11 09:26:44,218 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 32, in conectar_mysql
-    conn = mysql.connector.connect(
-        host=host,
-    ...<4 lines>...
-        connection_timeout=10,
-    )
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 09:31:12,958 - INFO - Running main.py directly
-2025-08-11 09:31:12,958 - INFO - Starting synchronization with Bling
-2025-08-11 09:31:12,958 - INFO - Connecting to database
-2025-08-11 09:31:12,958 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti
-2025-08-11 09:31:12,958 - INFO - DB_PASSWORD length: 10
-2025-08-11 09:31:13,696 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 33, in conectar_mysql
-    conn = mysql.connector.connect(
-        host=host,
-    ...<4 lines>...
-        connection_timeout=10,
-    )
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 09:38:30,821 - INFO - Running main.py directly
-2025-08-11 09:38:30,821 - INFO - Starting synchronization with Bling
-2025-08-11 09:38:30,821 - INFO - Connecting to database
-2025-08-11 09:38:30,821 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti use_pure=True auth_plugin=- ssl_mode=- ssl_ca=-
-2025-08-11 09:38:31,441 - INFO - package: mysql.connector.plugins
-2025-08-11 09:38:31,441 - INFO - plugin_name: mysql_native_password
-2025-08-11 09:38:31,443 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
-2025-08-11 09:38:31,855 - INFO - Database connection established
-2025-08-11 09:38:31,992 - INFO - Creating table if not exists
-2025-08-11 09:38:32,130 - INFO - Fetching products page=1
-2025-08-11 09:38:32,130 - INFO - Request products page=1
-2025-08-11 09:38:32,614 - INFO - Products API status code: 200
-2025-08-11 09:38:32,615 - INFO - Products returned: 100
-2025-08-11 09:38:32,615 - INFO - First product name: PLACA AJUSTE DUPLO VOLT/AMP PRO PFC 12V
-2025-08-11 09:38:32,615 - INFO - Items received: 100
-2025-08-11 09:39:00,473 - INFO - Commit page results to database
-2025-08-11 09:39:01,115 - INFO - Fetching products page=2
-2025-08-11 09:39:01,115 - INFO - Request products page=2
-2025-08-11 09:39:01,549 - INFO - Products API status code: 200
-2025-08-11 09:39:01,550 - INFO - Products returned: 100
-2025-08-11 09:39:01,550 - INFO - First product name: REBITE PLASTICO 4,3MM
-2025-08-11 09:39:01,550 - INFO - Items received: 100
-2025-08-11 09:39:30,713 - INFO - Commit page results to database
-2025-08-11 09:39:31,350 - INFO - Fetching products page=3
-2025-08-11 09:39:31,351 - INFO - Request products page=3
-2025-08-11 09:39:31,876 - INFO - Products API status code: 200
-2025-08-11 09:39:31,877 - INFO - Products returned: 100
-2025-08-11 09:39:31,877 - INFO - First product name: CAPACITOR ELETROLÍTICO 470UF 400V
-2025-08-11 09:39:31,877 - INFO - Items received: 100
-2025-08-11 09:40:00,652 - INFO - Commit page results to database
-2025-08-11 09:40:01,290 - INFO - Fetching products page=4
-2025-08-11 09:40:01,290 - INFO - Request products page=4
-2025-08-11 09:40:01,799 - INFO - Products API status code: 200
-2025-08-11 09:40:01,800 - INFO - Products returned: 100
-2025-08-11 09:40:01,800 - INFO - First product name: RESISTOR SMD 0R15 1W 2512
-2025-08-11 09:40:01,800 - INFO - Items received: 100
-2025-08-11 09:40:30,983 - INFO - Commit page results to database
-2025-08-11 09:40:31,620 - INFO - Fetching products page=5
-2025-08-11 09:40:31,620 - INFO - Request products page=5
-2025-08-11 09:40:32,177 - INFO - Products API status code: 200
-2025-08-11 09:40:32,178 - INFO - Products returned: 100
-2025-08-11 09:40:32,178 - INFO - First product name: RESISTOR 1W 82R
-2025-08-11 09:40:32,178 - INFO - Items received: 100
-2025-08-11 09:41:00,796 - INFO - Commit page results to database
-2025-08-11 09:41:01,441 - INFO - Fetching products page=6
-2025-08-11 09:41:01,441 - INFO - Request products page=6
-2025-08-11 09:41:01,891 - INFO - Products API status code: 200
-2025-08-11 09:41:01,891 - INFO - Products returned: 100
-2025-08-11 09:41:01,891 - INFO - First product name: CAPACITOR ELETROLITICO 220uF 200V 105° ARAME - EPCOS
-2025-08-11 09:41:01,891 - INFO - Items received: 100
-2025-08-11 09:41:29,834 - INFO - Commit page results to database
-2025-08-11 09:41:30,475 - INFO - Fetching products page=7
-2025-08-11 09:41:30,475 - INFO - Request products page=7
-2025-08-11 09:41:30,965 - INFO - Products API status code: 200
-2025-08-11 09:41:30,966 - INFO - Products returned: 100
-2025-08-11 09:41:30,966 - INFO - First product name: TRANSISTOR PTH K13A65U ( FQP13A65U / MDF13N50B)
-2025-08-11 09:41:30,966 - INFO - Items received: 100
-2025-08-11 09:41:58,535 - INFO - Commit page results to database
-2025-08-11 09:41:59,173 - INFO - Fetching products page=8
-2025-08-11 09:41:59,173 - INFO - Request products page=8
-2025-08-11 09:41:59,748 - INFO - Products API status code: 200
-2025-08-11 09:41:59,749 - INFO - Products returned: 100
-2025-08-11 09:41:59,749 - INFO - First product name: CIRCUITO INTEGRADO MM74HC SMD
-2025-08-11 09:41:59,749 - INFO - Items received: 100
-2025-08-11 09:42:28,003 - INFO - Commit page results to database
-2025-08-11 09:42:28,640 - INFO - Fetching products page=9
-2025-08-11 09:42:28,640 - INFO - Request products page=9
-2025-08-11 09:42:29,057 - INFO - Products API status code: 200
-2025-08-11 09:42:29,057 - INFO - Products returned: 100
-2025-08-11 09:42:29,057 - INFO - First product name: TRIMPOT 3006P 200K "
-2025-08-11 09:42:29,057 - INFO - Items received: 100
-2025-08-11 09:42:57,881 - INFO - Commit page results to database
-2025-08-11 09:42:58,519 - INFO - Fetching products page=10
-2025-08-11 09:42:58,519 - INFO - Request products page=10
-2025-08-11 09:42:58,927 - INFO - Products API status code: 200
-2025-08-11 09:42:58,927 - INFO - Products returned: 100
-2025-08-11 09:42:58,927 - INFO - First product name: RESISTOR 120R 1W 5% "
-2025-08-11 09:42:58,927 - INFO - Items received: 100
-2025-08-11 09:43:27,851 - INFO - Commit page results to database
-2025-08-11 09:43:28,489 - INFO - Fetching products page=11
-2025-08-11 09:43:28,490 - INFO - Request products page=11
-2025-08-11 09:43:28,894 - INFO - Products API status code: 200
-2025-08-11 09:43:28,894 - INFO - Products returned: 100
-2025-08-11 09:43:28,894 - INFO - First product name: RESISTOR CR25 82R "
-2025-08-11 09:43:28,895 - INFO - Items received: 100
-2025-08-11 09:43:56,548 - INFO - Commit page results to database
-2025-08-11 09:43:57,186 - INFO - Fetching products page=12
-2025-08-11 09:43:57,186 - INFO - Request products page=12
-2025-08-11 09:43:57,630 - INFO - Products API status code: 200
-2025-08-11 09:43:57,630 - INFO - Products returned: 100
-2025-08-11 09:43:57,630 - INFO - First product name: RESISTOR 3W 82R "
-2025-08-11 09:43:57,630 - INFO - Items received: 100
-2025-08-11 09:44:25,267 - INFO - Commit page results to database
-2025-08-11 09:44:25,904 - INFO - Fetching products page=13
-2025-08-11 09:44:25,905 - INFO - Request products page=13
-2025-08-11 09:44:26,377 - INFO - Products API status code: 200
-2025-08-11 09:44:26,377 - INFO - Products returned: 100
-2025-08-11 09:44:26,377 - INFO - First product name: DIODO ZENER 5W 4V7 - 1N5337 "
-2025-08-11 09:44:26,377 - INFO - Items received: 100
-2025-08-11 09:44:55,049 - INFO - Commit page results to database
-2025-08-11 09:44:55,687 - INFO - Fetching products page=14
-2025-08-11 09:44:55,687 - INFO - Request products page=14
-2025-08-11 09:44:56,109 - INFO - Products API status code: 200
-2025-08-11 09:44:56,109 - INFO - Products returned: 100
-2025-08-11 09:44:56,109 - INFO - First product name: Trimpot 3296W 200R (201) "
-2025-08-11 09:44:56,109 - INFO - Items received: 100
-2025-08-11 09:45:23,775 - INFO - Commit page results to database
-2025-08-11 09:45:24,413 - INFO - Fetching products page=15
-2025-08-11 09:45:24,413 - INFO - Request products page=15
-2025-08-11 09:45:24,877 - INFO - Products API status code: 200
-2025-08-11 09:45:24,877 - INFO - Products returned: 100
-2025-08-11 09:45:24,877 - INFO - First product name: CAPACITOR ELETROLÍTICO 4700UF 63V 105° ARAME
-2025-08-11 09:45:24,878 - INFO - Items received: 100
-2025-08-11 09:45:53,562 - INFO - Commit page results to database
-2025-08-11 09:45:54,200 - INFO - Fetching products page=16
-2025-08-11 09:45:54,200 - INFO - Request products page=16
-2025-08-11 09:45:54,548 - INFO - Products API status code: 200
-2025-08-11 09:45:54,548 - INFO - Products returned: 34
-2025-08-11 09:45:54,548 - INFO - First product name: RESISTOR PTH 10R 5% (R20)
-2025-08-11 09:45:54,548 - INFO - Items received: 34
-2025-08-11 09:46:04,045 - INFO - Commit page results to database
-2025-08-11 09:46:04,684 - INFO - Fetching products page=17
-2025-08-11 09:46:04,684 - INFO - Request products page=17
-2025-08-11 09:46:05,034 - INFO - Products API status code: 200
-2025-08-11 09:46:05,034 - INFO - Products returned: 0
-2025-08-11 09:46:05,034 - INFO - Items received: 0
-2025-08-11 09:46:05,034 - WARNING - No products returned. Stopping
-2025-08-11 09:46:05,035 - INFO - Synchronization finished. Total inserted or updated: 1534
-2025-08-11 09:47:58,513 - INFO - Running main.py directly
-2025-08-11 09:47:58,514 - INFO - Starting synchronization with Bling
-2025-08-11 09:47:58,515 - INFO - Connecting to database
-2025-08-11 09:47:58,515 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti use_pure=True auth_plugin=- ssl_mode=- ssl_ca=-
-2025-08-11 09:47:59,136 - INFO - package: mysql.connector.plugins
-2025-08-11 09:47:59,136 - INFO - plugin_name: mysql_native_password
-2025-08-11 09:47:59,137 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
-2025-08-11 09:47:59,550 - INFO - Database connection established
-2025-08-11 09:47:59,687 - INFO - Creating table if not exists
-2025-08-11 09:47:59,826 - INFO - Fetching products page=1
-2025-08-11 09:47:59,826 - INFO - Request products page=1
-2025-08-11 09:48:00,123 - WARNING - Token expired. Attempting refresh
-2025-08-11 09:48:00,414 - ERROR - Token refresh failed. Status: 400 Body: {"error":{"type":"invalid_client","message":"invalid_client","description":"Client credentials were not found in the headers"}}
-2025-08-11 09:48:00,414 - ERROR - Token refresh failed
-2025-08-11 09:48:00,414 - INFO - Items received: 0
-2025-08-11 09:48:00,414 - WARNING - No products returned. Stopping
-2025-08-11 09:48:00,414 - INFO - Synchronization finished. Total inserted or updated: 0
-2025-08-11 09:57:53,569 - WARNING - No products returned. Stopping
-2025-08-11 10:01:57,528 - INFO - Running main.py directly
-2025-08-11 10:01:57,529 - INFO - Starting synchronization with Bling
-2025-08-11 10:01:57,529 - INFO - Connecting to database
-2025-08-11 10:01:57,529 - INFO - Connecting to database host=108.167.132.218 port=3306 db=acdcco13_banquinho user=acdcco13_ti use_pure=True auth_plugin=- ssl_mode=- ssl_ca=-
-2025-08-11 10:01:58,161 - INFO - package: mysql.connector.plugins
-2025-08-11 10:01:58,161 - INFO - plugin_name: mysql_native_password
-2025-08-11 10:01:58,162 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLNativePasswordAuthPlugin
-2025-08-11 10:01:58,576 - INFO - Database connection established
-2025-08-11 10:01:58,714 - INFO - Creating table if not exists
-2025-08-11 10:01:58,852 - INFO - Fetching products page=1
-2025-08-11 10:01:58,852 - INFO - Request products page=1
-2025-08-11 10:01:59,395 - INFO - Products API status code: 200
-2025-08-11 10:01:59,396 - INFO - Products returned: 100
-2025-08-11 10:01:59,396 - INFO - First product name: PLACA AJUSTE DUPLO VOLT/AMP PRO PFC 12V
-2025-08-11 10:01:59,396 - INFO - Items received: 100
-2025-08-11 10:02:13,956 - INFO - Commit page results to database
-2025-08-11 10:02:14,608 - INFO - Fetching products page=2
-2025-08-11 10:02:14,608 - INFO - Request products page=2
-2025-08-11 10:02:15,077 - INFO - Products API status code: 200
-2025-08-11 10:02:15,078 - INFO - Products returned: 100
-2025-08-11 10:02:15,078 - INFO - First product name: REBITE PLASTICO 4,3MM
-2025-08-11 10:02:15,078 - INFO - Items received: 100
-2025-08-11 10:02:29,055 - INFO - Commit page results to database
-2025-08-11 10:02:29,697 - INFO - Fetching products page=3
-2025-08-11 10:02:29,698 - INFO - Request products page=3
-2025-08-11 10:02:30,325 - INFO - Products API status code: 200
-2025-08-11 10:02:30,325 - INFO - Products returned: 100
-2025-08-11 10:02:30,326 - INFO - First product name: CAPACITOR ELETROLÍTICO 470UF 400V
-2025-08-11 10:02:30,326 - INFO - Items received: 100
-2025-08-11 10:02:44,570 - INFO - Commit page results to database
-2025-08-11 10:02:45,208 - INFO - Fetching products page=4
-2025-08-11 10:02:45,208 - INFO - Request products page=4
-2025-08-11 10:02:45,678 - INFO - Products API status code: 200
-2025-08-11 10:02:45,678 - INFO - Products returned: 100
-2025-08-11 10:02:45,678 - INFO - First product name: RESISTOR SMD 0R15 1W 2512
-2025-08-11 10:02:45,678 - INFO - Items received: 100
-2025-08-11 10:03:00,023 - INFO - Commit page results to database
-2025-08-11 10:03:00,672 - INFO - Fetching products page=5
-2025-08-11 10:03:00,673 - INFO - Request products page=5
-2025-08-11 10:03:01,131 - INFO - Products API status code: 200
-2025-08-11 10:03:01,132 - INFO - Products returned: 100
-2025-08-11 10:03:01,132 - INFO - First product name: RESISTOR 1W 82R
-2025-08-11 10:03:01,132 - INFO - Items received: 100
-2025-08-11 10:03:15,972 - INFO - Commit page results to database
-2025-08-11 10:03:16,614 - INFO - Fetching products page=6
-2025-08-11 10:03:16,614 - INFO - Request products page=6
-2025-08-11 10:03:17,080 - INFO - Products API status code: 200
-2025-08-11 10:03:17,080 - INFO - Products returned: 100
-2025-08-11 10:03:17,080 - INFO - First product name: CAPACITOR ELETROLITICO 220uF 200V 105° ARAME - EPCOS
-2025-08-11 10:03:17,080 - INFO - Items received: 100
-2025-08-11 10:03:30,993 - INFO - Commit page results to database
-2025-08-11 10:03:31,631 - INFO - Fetching products page=7
-2025-08-11 10:03:31,631 - INFO - Request products page=7
-2025-08-11 10:03:32,080 - INFO - Products API status code: 200
-2025-08-11 10:03:32,081 - INFO - Products returned: 100
-2025-08-11 10:03:32,081 - INFO - First product name: TRANSISTOR PTH K13A65U ( FQP13A65U / MDF13N50B)
-2025-08-11 10:03:32,081 - INFO - Items received: 100
-2025-08-11 10:03:46,340 - INFO - Commit page results to database
-2025-08-11 10:03:46,978 - INFO - Fetching products page=8
-2025-08-11 10:03:46,978 - INFO - Request products page=8
-2025-08-11 10:03:47,460 - INFO - Products API status code: 200
-2025-08-11 10:03:47,461 - INFO - Products returned: 100
-2025-08-11 10:03:47,461 - INFO - First product name: CIRCUITO INTEGRADO MM74HC SMD
-2025-08-11 10:03:47,461 - INFO - Items received: 100
-2025-08-11 10:04:02,369 - INFO - Commit page results to database
-2025-08-11 10:04:03,008 - INFO - Fetching products page=9
-2025-08-11 10:04:03,008 - INFO - Request products page=9
-2025-08-11 10:04:03,386 - INFO - Products API status code: 200
-2025-08-11 10:04:03,386 - INFO - Products returned: 100
-2025-08-11 10:04:03,386 - INFO - First product name: TRIMPOT 3006P 200K "
-2025-08-11 10:04:03,386 - INFO - Items received: 100
-2025-08-11 10:04:17,682 - INFO - Commit page results to database
-2025-08-11 10:04:18,320 - INFO - Fetching products page=10
-2025-08-11 10:04:18,320 - INFO - Request products page=10
-2025-08-11 10:04:18,708 - INFO - Products API status code: 200
-2025-08-11 10:04:18,709 - INFO - Products returned: 100
-2025-08-11 10:04:18,709 - INFO - First product name: RESISTOR 120R 1W 5% "
-2025-08-11 10:04:18,709 - INFO - Items received: 100
-2025-08-11 10:04:32,978 - INFO - Commit page results to database
-2025-08-11 10:04:33,626 - INFO - Fetching products page=11
-2025-08-11 10:04:33,627 - INFO - Request products page=11
-2025-08-11 10:04:34,069 - INFO - Products API status code: 200
-2025-08-11 10:04:34,070 - INFO - Products returned: 100
-2025-08-11 10:04:34,070 - INFO - First product name: RESISTOR CR25 82R "
-2025-08-11 10:04:34,070 - INFO - Items received: 100
-2025-08-11 10:04:48,328 - INFO - Commit page results to database
-2025-08-11 10:04:48,966 - INFO - Fetching products page=12
-2025-08-11 10:04:48,966 - INFO - Request products page=12
-2025-08-11 10:04:49,352 - INFO - Products API status code: 200
-2025-08-11 10:04:49,353 - INFO - Products returned: 100
-2025-08-11 10:04:49,353 - INFO - First product name: RESISTOR 3W 82R "
-2025-08-11 10:04:49,353 - INFO - Items received: 100
-2025-08-11 10:05:03,666 - INFO - Commit page results to database
-2025-08-11 10:05:04,305 - INFO - Fetching products page=13
-2025-08-11 10:05:04,305 - INFO - Request products page=13
-2025-08-11 10:05:04,717 - INFO - Products API status code: 200
-2025-08-11 10:05:04,717 - INFO - Products returned: 100
-2025-08-11 10:05:04,717 - INFO - First product name: DIODO ZENER 5W 4V7 - 1N5337 "
-2025-08-11 10:05:04,718 - INFO - Items received: 100
-2025-08-11 10:05:18,909 - INFO - Commit page results to database
-2025-08-11 10:05:19,547 - INFO - Fetching products page=14
-2025-08-11 10:05:19,547 - INFO - Request products page=14
-2025-08-11 10:05:19,936 - INFO - Products API status code: 200
-2025-08-11 10:05:19,936 - INFO - Products returned: 100
-2025-08-11 10:05:19,936 - INFO - First product name: Trimpot 3296W 200R (201) "
-2025-08-11 10:05:19,936 - INFO - Items received: 100
-2025-08-11 10:05:34,204 - INFO - Commit page results to database
-2025-08-11 10:05:34,841 - INFO - Fetching products page=15
-2025-08-11 10:05:34,841 - INFO - Request products page=15
-2025-08-11 10:05:35,309 - INFO - Products API status code: 200
-2025-08-11 10:05:35,309 - INFO - Products returned: 100
-2025-08-11 10:05:35,309 - INFO - First product name: CAPACITOR ELETROLÍTICO 4700UF 63V 105° ARAME
-2025-08-11 10:05:35,310 - INFO - Items received: 100
-2025-08-11 10:05:49,232 - INFO - Commit page results to database
-2025-08-11 10:05:49,869 - INFO - Fetching products page=16
-2025-08-11 10:05:49,869 - INFO - Request products page=16
-2025-08-11 10:05:50,255 - INFO - Products API status code: 200
-2025-08-11 10:05:50,256 - INFO - Products returned: 34
-2025-08-11 10:05:50,256 - INFO - First product name: RESISTOR PTH 10R 5% (R20)
-2025-08-11 10:05:50,256 - INFO - Items received: 34
-2025-08-11 10:05:55,293 - INFO - Commit page results to database
-2025-08-11 10:05:55,930 - INFO - Fetching products page=17
-2025-08-11 10:05:55,931 - INFO - Request products page=17
-2025-08-11 10:05:56,234 - INFO - Products API status code: 200
-2025-08-11 10:05:56,234 - INFO - Products returned: 0
-2025-08-11 10:05:56,234 - INFO - Items received: 0
-2025-08-11 10:05:56,234 - WARNING - No products returned. Stopping
-2025-08-11 10:05:56,234 - INFO - Synchronization finished. Total inserted or updated: 7
-2025-08-11 10:24:49,244 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 20, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 10, in conectar_mysql
-    return mysql.connector.connect(
-           ~~~~~~~~~~~~~~~~~~~~~~~^
-        host=os.getenv("DB_HOST"),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<2 lines>...
-        database=os.getenv("DB_NAME")
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 10:33:36,580 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 20, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 10, in conectar_mysql
-    return mysql.connector.connect(
-           ~~~~~~~~~~~~~~~~~~~~~~~^
-        host=os.getenv("DB_HOST"),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<2 lines>...
-        database=os.getenv("DB_NAME")
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
-2025-08-11 10:35:32,507 - ERROR - Fatal error during execution
-Traceback (most recent call last):
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\main.py", line 19, in main
-    conn = conectar_mysql()
-  File "c:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\db.py", line 10, in conectar_mysql
-    return mysql.connector.connect(
-           ~~~~~~~~~~~~~~~~~~~~~~~^
-        host=os.getenv("DB_HOST"),
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ...<2 lines>...
-        database=os.getenv("DB_NAME")
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    )
-    ^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\pooling.py", line 322, in connect
-    return CMySQLConnection(*args, **kwargs)
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 142, in __init__
-    self.connect(**kwargs)
-    ~~~~~~~~~~~~^^^^^^^^^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\abstracts.py", line 1604, in connect
-    self._open_connection()
-    ~~~~~~~~~~~~~~~~~~~~~^^
-  File "C:\Users\silvio\OneDrive - SPARK ELETRONICA LTDA\Área de Trabalho\TotoroACDC\.venv\Lib\site-packages\mysql\connector\connection_cext.py", line 354, in _open_connection
-    self._cmysql.connect(**cnx_kwargs)
-    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
-RuntimeError: Failed raising error.
+2025-08-11 13:33:02,056 - INFO - Iniciando sincronização com Bling...
+2025-08-11 13:33:03,220 - INFO - Conectado ao banco 108.167.132.218:3306/acdcco13_banquinho
+2025-08-11 13:33:03,902 - INFO - Página 1: 100 produtos
+2025-08-11 13:34:10,834 - WARNING - Detalhe produto 16508946281 retornou HTTP 429
+2025-08-11 13:34:39,473 - INFO - Página 1 processada. Upserts acumulados: 100
+2025-08-11 13:34:40,392 - INFO - Página 2: 100 produtos
+2025-08-11 13:36:14,681 - INFO - Página 2 processada. Upserts acumulados: 200
+2025-08-11 13:36:15,839 - INFO - Página 3: 100 produtos
+2025-08-11 13:37:50,730 - INFO - Página 3 processada. Upserts acumulados: 300
+2025-08-11 13:37:51,747 - INFO - Página 4: 100 produtos
+2025-08-11 13:38:10,848 - WARNING - Detalhe produto 16051444993 retornou HTTP 429
+2025-08-11 13:39:10,901 - WARNING - Detalhe produto 5562853783 retornou HTTP 429
+2025-08-11 13:39:24,929 - INFO - Página 4 processada. Upserts acumulados: 400
+2025-08-11 13:39:25,832 - INFO - Página 5: 100 produtos
+2025-08-11 13:40:12,056 - WARNING - Detalhe produto 3792585899 retornou HTTP 429
+2025-08-11 13:40:58,482 - INFO - Página 5 processada. Upserts acumulados: 500
+2025-08-11 13:40:59,479 - INFO - Página 6: 100 produtos
+2025-08-11 13:41:10,966 - WARNING - Detalhe produto 3400262761 retornou HTTP 429
+2025-08-11 13:42:10,834 - WARNING - Detalhe produto 2021444501 retornou HTTP 429
+2025-08-11 13:42:31,238 - INFO - Página 6 processada. Upserts acumulados: 600
+2025-08-11 13:42:32,158 - INFO - Página 7: 100 produtos
+2025-08-11 13:43:11,933 - WARNING - Detalhe produto 1496405255 retornou HTTP 429
+2025-08-11 13:44:05,124 - INFO - Página 7 processada. Upserts acumulados: 700
+2025-08-11 13:44:06,028 - INFO - Página 8: 100 produtos
+2025-08-11 13:45:38,905 - INFO - Página 8 processada. Upserts acumulados: 800
+2025-08-11 13:45:39,792 - INFO - Página 9: 100 produtos
+2025-08-11 13:47:10,944 - INFO - Página 9 processada. Upserts acumulados: 900
+2025-08-11 13:47:11,730 - ERROR - Erro ao buscar produtos (HTTP 429): {
+    "error": {
+        "type": "TOO_MANY_REQUESTS",
+        "message": "Limite de requisi\u00e7\u00f5es atingido.",
+        "description": "O limite de requisi\u00e7\u00f5es por segundo foi atingido, tente novamente mais tarde.",
+        "limit": 3,
+        "period": "second"
+    }
+}
+2025-08-11 13:47:11,731 - INFO - Finalizado. Produtos processados: 900 | Inseridos/Atualizados: 900
+2025-08-11 14:38:42,119 - INFO - Iniciando sincronização com Bling...
+2025-08-11 14:38:43,297 - INFO - Conectado ao banco 108.167.132.218:3306/acdcco13_banquinho
+2025-08-11 14:38:43,723 - WARNING - Token expirado. Renovando...
+2025-08-11 14:38:43,978 - ERROR - Falha ao renovar token: HTTP 400 - {"error":{"type":"invalid_client","message":"invalid_client","description":"Client credentials were not found in the headers"}}
+2025-08-11 14:38:43,979 - ERROR - Erro ao buscar produtos (HTTP 401): {"error":{"type":"invalid_token","message":"invalid_token","description":"The access token provided has expired"}}
+2025-08-11 14:38:43,979 - INFO - Finalizado. Processados: 0 | Inseridos/Atualizados: 0 | Pendentes detalhe: 0
+2025-08-11 14:40:19,490 - INFO - Iniciando sincronização com Bling...
+2025-08-11 14:40:20,670 - INFO - Conectado ao banco 108.167.132.218:3306/acdcco13_banquinho
+2025-08-11 14:40:21,300 - INFO - Página 1: 100 produtos
+2025-08-11 14:42:26,653 - INFO - Página 1 processada. Upserts acumulados: 100
+2025-08-11 14:42:27,670 - INFO - Página 2: 100 produtos
+2025-08-11 14:42:56,000 - WARNING - 429 recebido. Aguardando 2.01s (tentativa 1).
+2025-08-11 14:44:34,444 - INFO - Página 2 processada. Upserts acumulados: 200
+2025-08-11 14:44:35,497 - INFO - Página 3: 100 produtos
+2025-08-11 14:46:42,375 - INFO - Página 3 processada. Upserts acumulados: 300
+2025-08-11 14:46:43,416 - INFO - Página 4: 100 produtos
+2025-08-11 14:48:50,623 - INFO - Página 4 processada. Upserts acumulados: 400
+2025-08-11 14:48:51,565 - INFO - Página 5: 100 produtos
+2025-08-11 14:50:56,367 - INFO - Página 5 processada. Upserts acumulados: 500
+2025-08-11 14:50:57,317 - INFO - Página 6: 100 produtos
+2025-08-11 14:53:01,222 - INFO - Página 6 processada. Upserts acumulados: 600
+2025-08-11 14:53:02,194 - INFO - Página 7: 100 produtos
+2025-08-11 14:55:05,380 - INFO - Página 7 processada. Upserts acumulados: 700
+2025-08-11 14:55:06,323 - INFO - Página 8: 100 produtos
+2025-08-11 14:57:10,798 - INFO - Página 8 processada. Upserts acumulados: 800
+2025-08-11 14:57:11,714 - INFO - Página 9: 100 produtos
+2025-08-11 14:59:14,737 - INFO - Página 9 processada. Upserts acumulados: 900
+2025-08-11 14:59:15,623 - INFO - Página 10: 100 produtos
+2025-08-11 15:01:25,168 - INFO - Página 10 processada. Upserts acumulados: 1000
+2025-08-11 15:01:26,103 - INFO - Página 11: 100 produtos
+2025-08-11 15:03:28,906 - INFO - Página 11 processada. Upserts acumulados: 1100
+2025-08-11 15:03:29,797 - INFO - Página 12: 100 produtos
+2025-08-11 15:05:33,093 - INFO - Página 12 processada. Upserts acumulados: 1200
+2025-08-11 15:05:33,985 - INFO - Página 13: 100 produtos
+2025-08-11 15:07:37,833 - INFO - Página 13 processada. Upserts acumulados: 1300
+2025-08-11 15:07:38,727 - INFO - Página 14: 100 produtos

@@ -1,62 +1,85 @@
-from logger import logger
-import requests
 import os
+import time
+import random
+import requests
 from dotenv import load_dotenv
+from logger import logger
 from token_refresh import renovar_token
 
 load_dotenv()
+API_BASE_URL = os.getenv("API_BASE_URL", "https://www.bling.com.br/Api/v3")
+HTTP_TIMEOUT = int(os.getenv("HTTP_TIMEOUT", "30"))
+MAX_RETRIES_429 = int(os.getenv("MAX_RETRIES_429", "5"))
 
-def get_token():
-    return os.getenv("BLING_ACCESS_TOKEN")
+def _auth_headers() -> dict:
+    token = os.getenv("BLING_ACCESS_TOKEN")
+    return {"Authorization": f"Bearer {token}", "Accept": "application/json"}
 
-def buscar_produtos(pagina=1):
-    token = get_token()
-    url = "https://www.bling.com.br/Api/v3/produtos"
-
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/json",
-    }
-
-    params = {
-        "limit": 100,
-        "pagina": pagina,
-    }
-
-    logger.info("Request products page=%s", pagina)
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=30)
-    except requests.RequestException as e:
-        logger.error("Network error while calling products API: %s", str(e))
-        return []
-
-    if response.status_code == 401:
-        logger.warning("Token expired. Attempting refresh")
-        novo_token = renovar_token()
-        if not novo_token:
-            logger.error("Token refresh failed")
-            return []
-        headers["Authorization"] = f"Bearer {novo_token}"
-        try:
-            response = requests.get(url, headers=headers, params=params, timeout=30)
-        except requests.RequestException as e:
-            logger.error("Network error after token refresh: %s", str(e))
-            return []
-
-    logger.info("Products API status code: %s", response.status_code)
-    if response.status_code == 200:
-        try:
-            json_data = response.json()
-        except ValueError:
-            logger.error("Products API returned non JSON")
-            return []
-        produtos = json_data.get("data", [])
-        logger.info("Products returned: %s", len(produtos))
-        if produtos:
-            primeiro_nome = produtos[0].get("nome")
-            if primeiro_nome:
-                logger.info("First product name: %s", primeiro_nome)
-        return produtos
+def _sleep_retry_after(resp, attempt: int):
+    ra = resp.headers.get("Retry-After")
+    if ra and ra.isdigit():
+        delay = int(ra)
     else:
-        logger.error("Products API error. Body: %s", response.text[:500])
+        delay = min(2 ** attempt, 30) + random.uniform(0, 0.5)
+    logger.warning("429 recebido. Aguardando %.2fs (tentativa %s).", delay, attempt)
+    time.sleep(delay)
+
+def _request_with_refresh(method: str, url: str, **kwargs):
+    try:
+        resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
+    except requests.RequestException as e:
+        logger.error("Erro de rede na chamada %s %s: %s", method, url, e)
+        return None
+
+    if resp is not None and resp.status_code == 401:
+        logger.warning("Token expirado. Renovando...")
+        if renovar_token():
+            try:
+                resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
+            except requests.RequestException as e:
+                logger.error("Erro de rede após renovar token: %s", e)
+                return None
+
+    if resp is not None and resp.status_code == 429:
+        for attempt in range(1, MAX_RETRIES_429 + 1):
+            _sleep_retry_after(resp, attempt)
+            try:
+                resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
+            except requests.RequestException as e:
+                logger.error("Erro de rede durante retentativa 429: %s", e)
+                return None
+            if resp.status_code != 429:
+                break
+
+    return resp
+
+def buscar_produtos(pagina: int = 1, limite: int = 100) -> list[dict]:
+    url = f"{API_BASE_URL}/produtos?pagina={pagina}&limite={limite}"
+    resp = _request_with_refresh("GET", url)
+    if resp is None or resp.status_code != 200:
+        if resp is not None:
+            logger.error("Erro ao buscar produtos (HTTP %s): %s", resp.status_code, resp.text[:400])
         return []
+    try:
+        data = resp.json()
+    except ValueError:
+        logger.error("Resposta /produtos não é JSON.")
+        return []
+    produtos = data.get("data") or []
+    logger.info("Página %s: %s produtos", pagina, len(produtos))
+    return produtos
+
+def buscar_detalhe_produto(id_bling: int) -> dict | None:
+    url = f"{API_BASE_URL}/produtos/{id_bling}"
+    resp = _request_with_refresh("GET", url)
+    if resp is None:
+        return None
+    if resp.status_code != 200:
+        logger.warning("Detalhe produto %s retornou HTTP %s", id_bling, resp.status_code)
+        return None
+    try:
+        data = resp.json()
+    except ValueError:
+        logger.error("Resposta /produtos/{id} não é JSON.")
+        return None
+    return data.get("data") or None
