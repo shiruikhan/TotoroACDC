@@ -23,7 +23,7 @@ def main():
             logger.info(f"Produtos retornados: {len(produtos)}")
 
             if not produtos:
-                logger.warning("⚠️ Nenhum produto retornado. Encerrando.")
+                logger.warning("Nenhum produto retornado. Encerrando.")
                 break
 
             for p in produtos:
