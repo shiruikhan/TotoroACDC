@@ -25,33 +25,53 @@ def _sleep_retry_after(resp, attempt: int):
     time.sleep(delay)
 
 def _request_with_refresh(method: str, url: str, **kwargs):
-    try:
-        resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
-    except requests.RequestException as e:
-        logger.error("Erro de rede na chamada %s %s: %s", method, url, e)
-        return None
+    max_retries = 3  # Número máximo de tentativas para renovar o token
+    retry_count = 0
 
-    if resp is not None and resp.status_code == 401:
-        logger.warning("Token expirado. Renovando...")
-        if renovar_token():
-            try:
-                resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
-            except requests.RequestException as e:
-                logger.error("Erro de rede após renovar token: %s", e)
-                return None
+    while retry_count < max_retries:
+        try:
+            resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
+            
+            # Se a resposta for bem-sucedida, retorna imediatamente
+            if resp.status_code == 200:
+                return resp
 
-    if resp is not None and resp.status_code == 429:
-        for attempt in range(1, MAX_RETRIES_429 + 1):
-            _sleep_retry_after(resp, attempt)
-            try:
-                resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
-            except requests.RequestException as e:
-                logger.error("Erro de rede durante retentativa 429: %s", e)
-                return None
-            if resp.status_code != 429:
-                break
+            # Tratamento de token expirado
+            if resp.status_code == 401:
+                logger.warning("Token expirado. Tentativa %d de %d de renovação...", retry_count + 1, max_retries)
+                new_token = renovar_token()
+                if new_token:
+                    retry_count += 1
+                    continue  # Tenta a requisição novamente com o novo token
+                else:
+                    logger.error("Falha ao renovar o token após %d tentativas", retry_count + 1)
+                    return None
 
-    return resp
+            # Tratamento de rate limit
+            if resp.status_code == 429:
+                for attempt in range(1, MAX_RETRIES_429 + 1):
+                    _sleep_retry_after(resp, attempt)
+                    try:
+                        resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
+                        if resp.status_code != 429:
+                            return resp
+                    except requests.RequestException as e:
+                        logger.error("Erro de rede durante retentativa 429: %s", e)
+                        return None
+
+            # Outros erros HTTP
+            logger.error(
+                "Erro na requisição %s %s: HTTP %d - %s",
+                method, url, resp.status_code, resp.text[:300]
+            )
+            return None
+
+        except requests.RequestException as e:
+            logger.error("Erro de rede na chamada %s %s: %s", method, url, e)
+            return None
+
+    logger.error("Número máximo de tentativas de renovação do token atingido")
+    return None
 
 def buscar_produtos(pagina: int = 1, limite: int = 100) -> list[dict]:
     url = f"{API_BASE_URL}/produtos?pagina={pagina}&limite={limite}"

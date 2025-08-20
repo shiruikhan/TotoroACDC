@@ -36,3 +36,11 @@
 2025-08-14 09:46:41,917 - WARNING - 429 recebido. Aguardando 2.19s (tentativa 1).
 2025-08-14 09:46:47,910 - WARNING - 429 recebido. Aguardando 2.39s (tentativa 1).
 2025-08-14 09:48:16,143 - WARNING - Finalizado. Processados=1543 | Upserts=1543 | Detalhes ok=648 | Detalhes pulados=895 | Detalhes falha=0
+2025-08-20 08:23:39,137 - ERROR - Erro HTTP ao renovar token: 400 - {"error":{"type":"invalid_client","message":"invalid_client","description":"Client credentials were not found in the headers"}}
+2025-08-20 08:23:39,138 - ERROR - Possível refresh token inválido ou expirado. Necessário reautenticar.
+2025-08-20 08:25:31,731 - INFO - Refresh token atualizado com sucesso.
+2025-08-20 08:25:31,732 - INFO - Token do Bling renovado com sucesso.
+2025-08-20 08:25:54,920 - INFO - Refresh token atualizado com sucesso.
+2025-08-20 08:25:54,921 - INFO - Token do Bling renovado com sucesso.
+2025-08-20 08:26:48,488 - INFO - Refresh token atualizado com sucesso.
+2025-08-20 08:26:48,489 - INFO - Token do Bling renovado com sucesso.

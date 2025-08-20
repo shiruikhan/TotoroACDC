@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status do Token Bling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .label {
+            font-weight: bold;
+            color: #666;
+        }
+        .value {
+            color: #333;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: #ff0000;
+            margin-top: 10px;
+        }
+        .success {
+            color: #4CAF50;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Status do Token Bling</h1>
+        
+        <div class="status">
+            <span class="label">Access Token:</span>
+            <span class="value" id="access-token">{{access_token}}</span>
+        </div>
+
+        <div class="status">
+            <span class="label">Último Refresh:</span>
+            <span class="value" id="last-refresh">{{last_refresh}}</span>
+        </div>
+
+        <div class="status">
+            <span class="label">Próximo Refresh:</span>
+            <span class="value" id="next-refresh">{{next_refresh}}</span>
+        </div>
+
+        <div class="status">
+            <span class="label">Status:</span>
+            <span class="value" id="token-status">{{status}}</span>
+        </div>
+
+        <button onclick="refreshToken()">Forçar Refresh do Token</button>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        function refreshToken() {
+            const button = document.querySelector('button');
+            const message = document.getElementById('message');
+            button.disabled = true;
+            button.textContent = 'Atualizando...';
+            message.className = '';
+            message.textContent = '';
+
+            fetch('/refresh-token', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    message.className = 'success';
+                    message.textContent = 'Token atualizado com sucesso!';
+                    // Atualiza os valores na página
+                    document.getElementById('access-token').textContent = data.access_token;
+                    document.getElementById('last-refresh').textContent = data.last_refresh;
+                    document.getElementById('next-refresh').textContent = data.next_refresh;
+                    document.getElementById('token-status').textContent = data.status;
+                } else {
+                    message.className = 'error';
+                    message.textContent = data.error || 'Erro ao atualizar o token';
+                }
+            })
+            .catch(error => {
+                message.className = 'error';
+                message.textContent = 'Erro ao comunicar com o servidor';
+            })
+            .finally(() => {
+                button.disabled = false;
+                button.textContent = 'Forçar Refresh do Token';
+            });
+        }
+
+        // Atualiza a página a cada minuto
+        setInterval(() => {
+            window.location.reload();
+        }, 60000);
+    </script>
+</body>
+</html>
