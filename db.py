@@ -40,17 +40,24 @@ def _to_int(value: Any) -> int:
         return 0
 
 _SQL_UPSERT = """
-INSERT INTO temp_produtos_bling
-    (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato)
-VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+INSERT INTO produtos_bling
+    (id_bling, codigo, nome, preco, estoque, tipo, situacao, formato,
+     largura, altura, profundidade, peso_liquido, peso_bruto, id_categoria)
+VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 ON DUPLICATE KEY UPDATE
-    codigo   = VALUES(codigo),
-    nome     = VALUES(nome),
-    preco    = VALUES(preco),
-    estoque  = VALUES(estoque),
-    tipo     = VALUES(tipo),
-    situacao = VALUES(situacao),
-    formato  = VALUES(formato)
+    codigo       = VALUES(codigo),
+    nome         = VALUES(nome),
+    preco        = VALUES(preco),
+    estoque      = VALUES(estoque),
+    tipo         = VALUES(tipo),
+    situacao     = VALUES(situacao),
+    formato      = VALUES(formato),
+    largura      = VALUES(largura),
+    altura       = VALUES(altura),
+    profundidade = VALUES(profundidade),
+    peso_liquido = VALUES(peso_liquido),
+    peso_bruto   = VALUES(peso_bruto),
+    id_categoria = VALUES(id_categoria)
 """
 
 def _params_upsert(produto: dict) -> Tuple:
@@ -63,6 +70,12 @@ def _params_upsert(produto: dict) -> Tuple:
         produto.get("tipo"),
         (produto.get("situacao") or "")[:1],
         produto.get("formato"),
+        _to_float(produto.get("largura")),
+        _to_float(produto.get("altura")),
+        _to_float(produto.get("profundidade")),
+        _to_float(produto.get("peso_liquido")),
+        _to_float(produto.get("peso_bruto")),
+        _to_int(produto.get("categoria")),
     )
 
 def inserir_ou_atualizar(cursor, produto: dict) -> bool:
@@ -95,7 +108,7 @@ def needs_details(cursor, id_bling: int, max_age_hours: int) -> bool:
         SELECT
             (imagem IS NULL OR imagem = '') AS img_vazia,
             (data_alteracao IS NULL OR data_alteracao < (NOW() - INTERVAL %s HOUR)) AS stale
-        FROM temp_produtos_bling
+        FROM produtos_bling
         WHERE id_bling = %s
         """,
         (int(max_age_hours), int(id_bling))

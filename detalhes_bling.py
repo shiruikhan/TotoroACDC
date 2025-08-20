@@ -64,7 +64,7 @@ def _extract_details(data: dict) -> dict:
         "situacao": situacao,
     }
 
-def update_product_details(cursor, id_bling: int, table_name: str = "temp_produtos_bling") -> bool:
+def update_product_details(cursor, id_bling: int, table_name: str = "produtos_bling") -> bool:
     detail = buscar_detalhe_produto(id_bling)
     if not detail:
         return False

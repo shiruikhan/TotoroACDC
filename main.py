@@ -23,6 +23,17 @@ def _safe_int(value):
         return 0
 
 def _mapear_produto(p: dict) -> dict:
+    dimensoes = p.get("dimensoes") or {}
+    pesos = p.get("pesos") or {}
+    categoria = p.get("categoria", {})
+    id_categoria = None
+    
+    # Tenta extrair o ID da categoria de diferentes estruturas possíveis
+    if isinstance(categoria, dict):
+        id_categoria = categoria.get("id")
+    elif isinstance(categoria, list) and len(categoria) > 0:
+        id_categoria = categoria[0].get("id")
+    
     return {
         "id_bling": int(p.get("id") or p.get("idBling") or 0),
         "codigo": p.get("codigo"),
@@ -32,6 +43,12 @@ def _mapear_produto(p: dict) -> dict:
         "tipo": p.get("tipo"),
         "situacao": (p.get("situacao") or p.get("status") or "")[:1],
         "formato": p.get("formato"),
+        "largura": _safe_float(dimensoes.get("largura") or dimensoes.get("larguraCm") or p.get("largura")),
+        "altura": _safe_float(dimensoes.get("altura") or dimensoes.get("alturaCm") or p.get("altura")),
+        "profundidade": _safe_float(dimensoes.get("profundidade") or dimensoes.get("comprimento") or p.get("profundidade")),
+        "peso_liquido": _safe_float(pesos.get("liquido") or pesos.get("pesoLiquido") or p.get("peso_liquido")),
+        "peso_bruto": _safe_float(pesos.get("bruto") or pesos.get("pesoBruto") or p.get("peso_bruto")),
+        "id_categoria": _safe_int(id_categoria),
     }
 
 def main():
