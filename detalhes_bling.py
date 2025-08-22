@@ -1,100 +1,113 @@
-from typing import Any
-from dotenv import load_dotenv
+from bling_api import buscar_detalhes_produto
+from datetime import datetime
 from logger import logger
-from bling_api import buscar_detalhe_produto
 
-load_dotenv()
-
-def _num(x: Any) -> float:
-    if x is None:
+def _num(value):
+    """Converte um valor para float de forma segura.
+    
+    Args:
+        value: Valor a ser convertido para float
+    
+    Returns:
+        float: Valor convertido ou 0.0 em caso de erro
+    """
+    if value is None:
         return 0.0
     try:
-        return float(str(x).replace(",", "."))
+        return float(str(value).replace(",", "."))
     except (ValueError, TypeError):
         return 0.0
 
-def _extract_details(data: dict) -> dict:
-    dimensoes = data.get("dimensoes") or {}
-    largura = _num(dimensoes.get("largura") or dimensoes.get("larguraCm") or data.get("largura"))
-    altura = _num(dimensoes.get("altura") or dimensoes.get("alturaCm") or data.get("altura"))
-    profundidade = _num(dimensoes.get("profundidade") or dimensoes.get("comprimento") or data.get("profundidade"))
-
-    pesos = data.get("pesos") or {}
-    peso_liquido = _num(pesos.get("liquido") or pesos.get("pesoLiquido") or data.get("peso_liquido"))
-    peso_bruto = _num(pesos.get("bruto") or pesos.get("pesoBruto") or data.get("peso_bruto"))
-
-    # IMAGEM: midia > imagens > internas[0].link -> externas[0].link -> imagensURL[0]
-    imagem = None
-    midia = data.get("midia") or {}
-    imgs = (midia.get("imagens") or {})
-    internas = imgs.get("internas") or []
-    externas = imgs.get("externas") or []
-    imagens_url = imgs.get("imagensURL") or []
-
-    if not imagem and isinstance(internas, list) and internas:
-        first = internas[0]
-        if isinstance(first, dict):
-            imagem = first.get("link") or first.get("url")
-
-    if not imagem and isinstance(externas, list) and externas:
-        first = externas[0]
-        if isinstance(first, dict):
-            imagem = first.get("link") or first.get("url")
-
-    if not imagem and isinstance(imagens_url, list) and imagens_url:
-        if isinstance(imagens_url[0], str):
-            imagem = imagens_url[0]
-
-    if not imagem:
-        bruto = imgs.get("link") or imgs.get("url") or data.get("imagem")
-        if isinstance(bruto, str):
-            imagem = bruto
-        elif isinstance(bruto, dict):
-            imagem = bruto.get("link") or bruto.get("url")
-
-    situacao = str((data.get("situacao") or data.get("status") or "")).strip()[:1]
-
+def _extract_details(produto: dict) -> dict:
+    """Extrai detalhes relevantes do produto retornado pela API.
+    
+    Args:
+        produto (dict): Dicionário com dados do produto da API
+    
+    Returns:
+        dict: Dicionário com detalhes extraídos
+    """
+    # Extrai dados de estoque
+    estoque = 0
+    if 'estoques' in produto and produto['estoques']:
+        for deposito in produto['estoques']:
+            estoque += _num(deposito.get('saldoFisicoAtual', 0))
+    
+    # Extrai dimensões
+    dimensoes = produto.get('dimensoes', {})
+    
+    # Extrai dados de preço
+    preco = 0
+    if isinstance(produto.get('preco'), dict):
+        preco = _num(produto['preco'].get('preco', 0))
+    else:
+        preco = _num(produto.get('preco', 0))
+    
+    # Extrai dados de peso
+    peso = produto.get('peso', {})
+    
     return {
-        "largura": largura,
-        "altura": altura,
-        "profundidade": profundidade,
-        "peso_liquido": peso_liquido,
-        "peso_bruto": peso_bruto,
-        "imagem": imagem,
-        "situacao": situacao,
+        "estoque": int(estoque),
+        "preco": preco,
+        "largura": _num(dimensoes.get('largura')),
+        "altura": _num(dimensoes.get('altura')),
+        "profundidade": _num(dimensoes.get('profundidade')),
+        "peso_liquido": _num(peso.get('liquido')),
+        "peso_bruto": _num(peso.get('bruto'))
     }
 
-def update_product_details(cursor, id_bling: int, table_name: str = "produtos_bling") -> bool:
-    detail = buscar_detalhe_produto(id_bling)
-    if not detail:
-        return False
-
-    fields = _extract_details(detail)
-    sql = f"""
-        UPDATE {table_name}
-           SET largura        = %s,
-               altura         = %s,
-               profundidade   = %s,
-               peso_liquido   = %s,
-               peso_bruto     = %s,
-               imagem         = %s,
-               situacao       = %s,
-               data_alteracao = NOW()
-         WHERE id_bling = %s
+def update_product_details(cursor, id_bling: int) -> bool:
+    """Atualiza os detalhes de um produto específico.
+    
+    Args:
+        cursor: Cursor do banco de dados
+        id_bling (int): ID do produto no Bling
+    
+    Returns:
+        bool: True se atualizado com sucesso, False caso contrário
     """
-    params = (
-        fields["largura"],
-        fields["altura"],
-        fields["profundidade"],
-        fields["peso_liquido"],
-        fields["peso_bruto"],
-        fields["imagem"],
-        fields["situacao"],
-        int(id_bling),
-    )
     try:
-        cursor.execute(sql, params)
+        # Busca detalhes do produto na API
+        produto = buscar_detalhes_produto(id_bling)
+        if not produto:
+            logger.warning(f"Detalhes não encontrados para produto {id_bling}")
+            return False
+
+        # Extrai detalhes relevantes
+        detalhes = _extract_details(produto)
+
+        # Monta a query de atualização
+        sql = """
+            UPDATE produtos_bling
+            SET estoque = %s,
+                preco = %s,
+                largura = %s,
+                altura = %s,
+                profundidade = %s,
+                peso_liquido = %s,
+                peso_bruto = %s,
+                data_alteracao = %s
+            WHERE id_bling = %s
+        """
+
+        # Executa a atualização
+        cursor.execute(
+            sql,
+            (
+                detalhes["estoque"],
+                detalhes["preco"],
+                detalhes["largura"],
+                detalhes["altura"],
+                detalhes["profundidade"],
+                detalhes["peso_liquido"],
+                detalhes["peso_bruto"],
+                datetime.now(),
+                id_bling
+            )
+        )
+
         return True
+
     except Exception as e:
-        logger.error("Falha ao atualizar detalhes (%s): %s", id_bling, e)
+        logger.error(f"Erro ao atualizar detalhes do produto {id_bling}: {e}")
         return False

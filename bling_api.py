@@ -1,106 +1,132 @@
-import os
-import time
-import random
 import requests
+import os
 from dotenv import load_dotenv
-from logger import logger
-from token_refresh import renovar_token
+from time import sleep
 
 load_dotenv()
-API_BASE_URL = os.getenv("API_BASE_URL", "https://www.bling.com.br/Api/v3")
-HTTP_TIMEOUT = int(os.getenv("HTTP_TIMEOUT", "30"))
-MAX_RETRIES_429 = int(os.getenv("MAX_RETRIES_429", "5"))
 
-def _auth_headers() -> dict:
-    token = os.getenv("BLING_ACCESS_TOKEN")
-    return {"Authorization": f"Bearer {token}", "Accept": "application/json"}
+def _get_auth_headers():
+    """Retorna os headers de autenticação para a API v3 do Bling."""
+    return {
+        'Authorization': f'Bearer {os.getenv("BLING_ACCESS_TOKEN")}',
+        'Accept': 'application/json'
+    }
 
-def _sleep_retry_after(resp, attempt: int):
-    ra = resp.headers.get("Retry-After")
-    if ra and ra.isdigit():
-        delay = int(ra)
-    else:
-        delay = min(2 ** attempt, 30) + random.uniform(0, 0.5)
-    logger.warning("429 recebido. Aguardando %.2fs (tentativa %s).", delay, attempt)
-    time.sleep(delay)
+def buscar_produtos(pagina=1):
+    """Busca produtos na API v3 do Bling.
 
-def _request_with_refresh(method: str, url: str, **kwargs):
-    max_retries = 3  # Número máximo de tentativas para renovar o token
-    retry_count = 0
+    Args:
+        pagina (int): Número da página a ser buscada.
 
-    while retry_count < max_retries:
-        try:
-            resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
-            
-            # Se a resposta for bem-sucedida, retorna imediatamente
-            if resp.status_code == 200:
-                return resp
-
-            # Tratamento de token expirado
-            if resp.status_code == 401:
-                logger.warning("Token expirado. Tentativa %d de %d de renovação...", retry_count + 1, max_retries)
-                new_token = renovar_token()
-                if new_token:
-                    retry_count += 1
-                    continue  # Tenta a requisição novamente com o novo token
+    Returns:
+        list: Lista de produtos retornados pela API.
+    """
+    try:
+        url = f"https://www.bling.com.br/Api/v3/produtos"
+        params = {
+            'pagina': pagina,
+            'limite': 100,
+            'criterio': 'cadastro',
+            'ordem': 'DESC'
+        }
+        
+        # Adiciona timeout e retry
+        max_retries = 3
+        retry_delay = 5
+        timeout = 30
+        
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(
+                    url,
+                    params=params,
+                    headers=_get_auth_headers(),
+                    timeout=timeout
+                )
+                response.raise_for_status()
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'data' in data:
+                        return data['data']
+                    return []
+                    
+            except requests.exceptions.Timeout:
+                if attempt < max_retries - 1:
+                    print(f"Timeout ao buscar produtos. Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos...")
+                    sleep(retry_delay)
+                    continue
                 else:
-                    logger.error("Falha ao renovar o token após %d tentativas", retry_count + 1)
+                    print("Erro de timeout após todas as tentativas")
+                    raise
+                    
+            except requests.exceptions.RequestException as e:
+                if attempt < max_retries - 1:
+                    print(f"Erro ao buscar produtos: {e}. Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos...")
+                    sleep(retry_delay)
+                    continue
+                else:
+                    print(f"Erro após todas as tentativas: {e}")
+                    raise
+                    
+        return []
+        
+    except Exception as e:
+        print(f"Erro ao buscar produtos: {e}")
+        return []
+
+def buscar_detalhes_produto(id_produto):
+    """Busca detalhes de um produto específico na API v3 do Bling.
+
+    Args:
+        id_produto (int): ID do produto no Bling.
+
+    Returns:
+        dict: Detalhes do produto ou None em caso de erro.
+    """
+    try:
+        url = f"https://www.bling.com.br/Api/v3/produtos/{id_produto}"
+        
+        # Adiciona timeout e retry
+        max_retries = 3
+        retry_delay = 5
+        timeout = 30
+        
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(
+                    url,
+                    headers=_get_auth_headers(),
+                    timeout=timeout
+                )
+                response.raise_for_status()
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if 'data' in data:
+                        return data['data']
                     return None
-
-            # Tratamento de rate limit
-            if resp.status_code == 429:
-                for attempt in range(1, MAX_RETRIES_429 + 1):
-                    _sleep_retry_after(resp, attempt)
-                    try:
-                        resp = requests.request(method, url, timeout=HTTP_TIMEOUT, headers=_auth_headers(), **kwargs)
-                        if resp.status_code != 429:
-                            return resp
-                    except requests.RequestException as e:
-                        logger.error("Erro de rede durante retentativa 429: %s", e)
-                        return None
-
-            # Outros erros HTTP
-            logger.error(
-                "Erro na requisição %s %s: HTTP %d - %s",
-                method, url, resp.status_code, resp.text[:300]
-            )
-            return None
-
-        except requests.RequestException as e:
-            logger.error("Erro de rede na chamada %s %s: %s", method, url, e)
-            return None
-
-    logger.error("Número máximo de tentativas de renovação do token atingido")
-    return None
-
-def buscar_produtos(pagina: int = 1, limite: int = 100) -> list[dict]:
-    url = f"{API_BASE_URL}/produtos?pagina={pagina}&limite={limite}"
-    resp = _request_with_refresh("GET", url)
-    if resp is None or resp.status_code != 200:
-        if resp is not None:
-            logger.error("Erro ao buscar produtos (HTTP %s): %s", resp.status_code, resp.text[:400])
-        return []
-    try:
-        data = resp.json()
-    except ValueError:
-        logger.error("Resposta /produtos não é JSON.")
-        return []
-    produtos = data.get("data") or []
-    # Em WARNING por padrão não polui; suba pra INFO se quiser ver páginas
-    logger.info("Página %s: %s produtos", pagina, len(produtos))
-    return produtos
-
-def buscar_detalhe_produto(id_bling: int) -> dict | None:
-    url = f"{API_BASE_URL}/produtos/{id_bling}"
-    resp = _request_with_refresh("GET", url)
-    if resp is None:
+                    
+            except requests.exceptions.Timeout:
+                if attempt < max_retries - 1:
+                    print(f"Timeout ao buscar detalhes do produto {id_produto}. Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos...")
+                    sleep(retry_delay)
+                    continue
+                else:
+                    print(f"Erro de timeout após todas as tentativas para o produto {id_produto}")
+                    raise
+                    
+            except requests.exceptions.RequestException as e:
+                if attempt < max_retries - 1:
+                    print(f"Erro ao buscar detalhes do produto {id_produto}: {e}. Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos...")
+                    sleep(retry_delay)
+                    continue
+                else:
+                    print(f"Erro após todas as tentativas para o produto {id_produto}: {e}")
+                    raise
+                    
         return None
-    if resp.status_code != 200:
-        logger.warning("Detalhe produto %s retornou HTTP %s", id_bling, resp.status_code)
+        
+    except Exception as e:
+        print(f"Erro ao buscar detalhes do produto {id_produto}: {e}")
         return None
-    try:
-        data = resp.json()
-    except ValueError:
-        logger.error("Resposta /produtos/{id} não é JSON.")
-        return None
-    return data.get("data") or None
