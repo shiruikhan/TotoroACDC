@@ -994,3 +994,61 @@ AttributeError: 'float' object has no attribute 'get'
 2025-08-22 10:45:45,516 - WARNING - Commit realizado após processar 1100 detalhes
 2025-08-22 10:46:48,910 - WARNING - Commit realizado após processar 1200 detalhes
 2025-08-22 10:47:53,266 - WARNING - Commit realizado após processar 1300 detalhes
+2025-08-22 10:48:57,700 - WARNING - Commit realizado após processar 1400 detalhes
+2025-08-22 10:50:03,761 - WARNING - Commit realizado após processar 1500 detalhes
+2025-08-22 10:50:25,953 - WARNING - Total final de registros no banco: 1533
+2025-08-22 10:50:25,953 - WARNING - Finalizado. Processados=1533 | Upserts=1533 | Detalhes ok=1533 | Detalhes pulados=0 | Detalhes falha=0
+2025-08-22 10:55:43,661 - WARNING - Iniciando sincronização com Bling...
+2025-08-22 10:56:47,782 - WARNING - Iniciando sincronização com Bling...
+2025-08-22 10:56:56,662 - WARNING - Total de produtos encontrados na API: 1533
+2025-08-22 10:56:56,669 - WARNING - Tentando inserir 1533 produtos em lote
+2025-08-22 10:56:57,612 - WARNING - Rows afetadas pelo upsert: 1533
+2025-08-22 10:56:57,897 - WARNING - Total de registros no banco após upsert: 1533
+2025-08-22 10:58:05,897 - WARNING - Commit realizado após processar 100 detalhes
+2025-08-22 10:59:12,238 - WARNING - Commit realizado após processar 200 detalhes
+2025-08-22 11:01:19,561 - WARNING - Iniciando sincronização com Bling...
+2025-08-22 11:01:30,311 - WARNING - Total de produtos encontrados na API: 1533
+2025-08-22 11:01:30,318 - WARNING - Tentando inserir 1533 produtos em lote
+2025-08-22 11:01:31,278 - WARNING - Rows afetadas pelo upsert: 1533
+2025-08-22 11:01:31,560 - WARNING - Total de registros no banco após upsert: 1533
+2025-08-22 11:01:32,016 - ERROR - Erro ao atualizar detalhes do produto 16522902154: 'int' object has no attribute 'get'
+2025-08-22 11:01:32,647 - ERROR - Erro ao atualizar detalhes do produto 16520514816: 'int' object has no attribute 'get'
+2025-08-22 11:01:33,231 - ERROR - Erro ao atualizar detalhes do produto 16520250018: 'int' object has no attribute 'get'
+2025-08-22 11:01:33,741 - ERROR - Erro ao atualizar detalhes do produto 16520249075: 'int' object has no attribute 'get'
+2025-08-22 11:01:34,216 - ERROR - Erro ao atualizar detalhes do produto 16520244716: 'int' object has no attribute 'get'
+2025-08-22 11:01:34,685 - ERROR - Erro ao atualizar detalhes do produto 16520243660: 'int' object has no attribute 'get'
+2025-08-22 11:01:35,180 - ERROR - Erro ao atualizar detalhes do produto 16520242675: 'int' object has no attribute 'get'
+2025-08-22 11:01:35,678 - ERROR - Erro ao atualizar detalhes do produto 16520240840: 'int' object has no attribute 'get'
+2025-08-22 11:01:36,164 - ERROR - Erro ao atualizar detalhes do produto 16520234141: 'int' object has no attribute 'get'
+2025-08-22 11:01:36,704 - ERROR - Erro ao atualizar detalhes do produto 16520233001: 'int' object has no attribute 'get'
+2025-08-22 11:01:37,220 - ERROR - Erro ao atualizar detalhes do produto 16519908081: 'int' object has no attribute 'get'
+2025-08-22 11:01:37,720 - ERROR - Erro ao atualizar detalhes do produto 16519871762: 'int' object has no attribute 'get'
+2025-08-22 11:01:38,224 - ERROR - Erro ao atualizar detalhes do produto 16519624964: 'int' object has no attribute 'get'
+2025-08-22 11:01:38,699 - ERROR - Erro ao atualizar detalhes do produto 16519620552: 'int' object has no attribute 'get'
+2025-08-22 11:01:39,171 - ERROR - Erro ao atualizar detalhes do produto 16517775686: 'int' object has no attribute 'get'
+2025-08-22 11:01:39,639 - ERROR - Erro ao atualizar detalhes do produto 16517453735: 'float' object has no attribute 'get'
+2025-08-22 11:01:40,133 - ERROR - Erro ao atualizar detalhes do produto 16517337026: 'int' object has no attribute 'get'
+2025-08-22 11:01:40,612 - ERROR - Erro ao atualizar detalhes do produto 16517333205: 'int' object has no attribute 'get'
+2025-08-22 11:01:41,154 - ERROR - Erro ao atualizar detalhes do produto 16517055044: 'float' object has no attribute 'get'
+2025-08-22 11:01:41,727 - ERROR - Erro ao atualizar detalhes do produto 16516682520: 'float' object has no attribute 'get'
+2025-08-22 11:01:42,270 - ERROR - Erro ao atualizar detalhes do produto 16516537892: 'float' object has no attribute 'get'
+2025-08-22 11:05:52,388 - WARNING - Iniciando sincronização com Bling...
+2025-08-22 11:06:01,494 - WARNING - Total de produtos encontrados na API: 1533
+2025-08-22 11:06:01,500 - WARNING - Tentando inserir 1533 produtos em lote
+2025-08-22 11:06:02,457 - WARNING - Rows afetadas pelo upsert: 3066
+2025-08-22 11:06:02,741 - WARNING - Total de registros no banco após upsert: 1533
+2025-08-22 11:07:10,064 - WARNING - Commit realizado após processar 100 detalhes
+2025-08-22 11:08:15,733 - WARNING - Commit realizado após processar 200 detalhes
+2025-08-22 11:09:23,509 - WARNING - Commit realizado após processar 300 detalhes
+2025-08-22 11:10:29,517 - WARNING - Commit realizado após processar 400 detalhes
+2025-08-22 11:11:37,397 - WARNING - Commit realizado após processar 500 detalhes
+2025-08-22 11:12:43,705 - WARNING - Commit realizado após processar 600 detalhes
+2025-08-22 11:13:48,891 - WARNING - Commit realizado após processar 700 detalhes
+2025-08-22 11:14:53,574 - WARNING - Commit realizado após processar 800 detalhes
+2025-08-22 11:15:56,991 - WARNING - Commit realizado após processar 900 detalhes
+2025-08-22 11:17:00,825 - WARNING - Commit realizado após processar 1000 detalhes
+2025-08-22 11:17:19,981 - WARNING - Iniciando sincronização com Bling...
+2025-08-22 11:17:28,761 - WARNING - Total de produtos encontrados na API: 1533
+2025-08-22 11:17:28,767 - WARNING - Tentando inserir 1533 produtos em lote
+2025-08-22 11:17:29,695 - WARNING - Rows afetadas pelo upsert: 1533
+2025-08-22 11:17:29,978 - WARNING - Total de registros no banco após upsert: 1533

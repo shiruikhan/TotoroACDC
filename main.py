@@ -54,7 +54,7 @@ def _mapear_produto(p: dict) -> dict:
     estoque = 0
     if 'estoques' in p and p['estoques']:
         for deposito in p['estoques']:
-            estoque += _safe_float(deposito.get('saldoFisicoAtual', 0))
+            estoque += _safe_float(deposito.get('saldoVirtualTotal', 0))
     
     # Extrai dimensões
     dimensoes = p.get('dimensoes', {})
@@ -79,8 +79,8 @@ def _mapear_produto(p: dict) -> dict:
         "largura": _safe_float(dimensoes.get("largura")),
         "altura": _safe_float(dimensoes.get("altura")),
         "profundidade": _safe_float(dimensoes.get("profundidade")),
-        "peso_liquido": _safe_float(p.get("peso", {}).get("liquido")),
-        "peso_bruto": _safe_float(p.get("peso", {}).get("bruto"))
+        "peso_liquido": p.get("pesoLiquido"),
+        "peso_bruto": p.get("pesoBruto")
     }
 
 def main():

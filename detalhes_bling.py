@@ -26,12 +26,7 @@ def _extract_details(produto: dict) -> dict:
     
     Returns:
         dict: Dicionário com detalhes extraídos
-    """
-    # Extrai dados de estoque
-    estoque = 0
-    if 'estoques' in produto and produto['estoques']:
-        for deposito in produto['estoques']:
-            estoque += _num(deposito.get('saldoFisicoAtual', 0))
+    """   
     
     # Extrai dimensões
     dimensoes = produto.get('dimensoes', {})
@@ -42,18 +37,26 @@ def _extract_details(produto: dict) -> dict:
         preco = _num(produto['preco'].get('preco', 0))
     else:
         preco = _num(produto.get('preco', 0))
-    
-    # Extrai dados de peso
-    peso = produto.get('peso', {})
+           
+    # Extrai imagem do produto
+    imagem = None
+    midia = produto.get('midia', {})
+    imagens = midia.get('imagens', {})
+    internas = imagens.get('internas', [])
+    if internas and isinstance(internas, list) and len(internas) > 0:
+        primeiro_item = internas[0]
+        if isinstance(primeiro_item, dict):
+            imagem = primeiro_item.get('link')
     
     return {
-        "estoque": int(estoque),
+        "estoque": (produto.get("estoque") or {}).get("saldoVirtualTotal", 0),
         "preco": preco,
         "largura": _num(dimensoes.get('largura')),
         "altura": _num(dimensoes.get('altura')),
         "profundidade": _num(dimensoes.get('profundidade')),
-        "peso_liquido": _num(peso.get('liquido')),
-        "peso_bruto": _num(peso.get('bruto'))
+        "peso_liquido": produto.get('pesoLiquido'),
+        "peso_bruto": produto.get('pesoBruto'),
+        "imagem": imagem
     }
 
 def update_product_details(cursor, id_bling: int) -> bool:
@@ -86,6 +89,7 @@ def update_product_details(cursor, id_bling: int) -> bool:
                 profundidade = %s,
                 peso_liquido = %s,
                 peso_bruto = %s,
+                imagem = %s,
                 data_alteracao = %s
             WHERE id_bling = %s
         """
@@ -101,6 +105,7 @@ def update_product_details(cursor, id_bling: int) -> bool:
                 detalhes["profundidade"],
                 detalhes["peso_liquido"],
                 detalhes["peso_bruto"],
+                detalhes["imagem"],
                 datetime.now(),
                 id_bling
             )
