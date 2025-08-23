@@ -1,4 +1,5 @@
 .env
-/.vscode
-/.venv
-integracao_bling.log
+.vscode
+.venv
+*.log
+
