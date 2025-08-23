@@ -6,7 +6,7 @@ import os  # Para acessar variáveis de ambiente
 
 # Configurações de logging através de variáveis de ambiente
 LOG_FILE = os.getenv("LOG_FILE", "integracao_bling.log")  # Arquivo de log
-LOG_LEVEL = os.getenv("LOG_LEVEL", "WARNING").upper()  # Nível de log (WARNING por padrão para reduzir verbosidade)
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()  # Nível de log (INFO por padrão para melhor visibilidade)
 
 # Criação e configuração do logger
 logger = logging.getLogger("bling_sync")  # Logger específico para sincronização
