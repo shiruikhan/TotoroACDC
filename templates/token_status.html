@@ -6,11 +6,131 @@
     <title>Status do Token Bling</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .status-item {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .status-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .status-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-size: 1.1em;
+        }
+        .status-label .icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+        .status-value {
+            color: #212529;
+            font-family: 'Courier New', monospace;
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+            word-break: break-all;
+            border: 1px solid #dee2e6;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+        .status-valid {
+            border-left-color: #28a745;
+        }
+        .status-invalid {
+            border-left-color: #dc3545;
+        }
+        .status-warning {
+            border-left-color: #ffc107;
+        }
+        .refresh-button {
+            background: linear-gradient(145deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 30px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+        .refresh-button:hover {
+            background: linear-gradient(145deg, #0056b3, #004085);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,123,255,0.4);
+        }
+        .refresh-button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .datetime-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .datetime-primary {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .datetime-secondary {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .indicator-valid {
+            background-color: #28a745;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+        }
+        .indicator-invalid {
+            background-color: #dc3545;
+            box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+        }
+        .indicator-warning {
+            background-color: #ffc107;
+            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
         }
         .card {
             background: white;
@@ -55,74 +175,198 @@
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Status do Token Bling</h1>
+    <div class="container">
+        <h1>🔐 Status do Token Bling API</h1>
         
-        <div class="status">
-            <span class="label">Access Token:</span>
-            <span class="value" id="access-token">{{access_token}}</span>
+        <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
+            <div class="status-label">
+                <span class="icon">🔑</span>
+                Token de Acesso:
+            </div>
+            <div class="status-value">{{ access_token[:50] }}...</div>
         </div>
-
-        <div class="status">
-            <span class="label">Último Refresh:</span>
-            <span class="value" id="last-refresh">{{last_refresh}}</span>
+        
+        <div class="status-item">
+            <div class="status-label">
+                <span class="icon">🕐</span>
+                Última Atualização:
+            </div>
+            <div class="status-value">
+                <div class="datetime-info">
+                    <div class="datetime-primary" id="last-refresh-formatted" data-raw="{{ last_refresh }}">{{ last_refresh }}</div>
+                    <div class="datetime-secondary" id="last-refresh-relative"></div>
+                </div>
+            </div>
         </div>
-
-        <div class="status">
-            <span class="label">Próximo Refresh:</span>
-            <span class="value" id="next-refresh">{{next_refresh}}</span>
+        
+        <div class="status-item">
+            <div class="status-label">
+                <span class="icon">⏰</span>
+                Próxima Atualização:
+            </div>
+            <div class="status-value">
+                <div class="datetime-info">
+                    <div class="datetime-primary" id="next-refresh-formatted" data-raw="{{ next_refresh }}">{{ next_refresh }}</div>
+                    <div class="datetime-secondary" id="next-refresh-relative"></div>
+                </div>
+            </div>
         </div>
-
-        <div class="status">
-            <span class="label">Status:</span>
-            <span class="value" id="token-status">{{status}}</span>
+        
+        <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
+            <div class="status-label">
+                <span class="status-indicator {{ 'indicator-valid' if status == 'válido' else 'indicator-invalid' }}"></span>
+                <span class="icon">📊</span>
+                Status:
+            </div>
+            <div class="status-value">{{ status.upper() }}</div>
         </div>
-
-        <button onclick="refreshToken()">Forçar Refresh do Token</button>
-        <div id="message"></div>
+        
+        <button class="refresh-button" onclick="refreshToken()">🔄 Atualizar Token Agora</button>
     </div>
 
     <script>
+        function formatDateTime(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return dateString; // Return original if invalid
+                }
+                
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
+                
+                const timeOptions = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZoneName: 'short'
+                };
+                
+                const formattedDate = date.toLocaleDateString('pt-BR', options);
+                const formattedTime = date.toLocaleTimeString('pt-BR', timeOptions);
+                
+                return `${formattedDate}, ${formattedTime}`;
+            } catch (error) {
+                return dateString; // Return original if error
+            }
+        }
+        
+        function getRelativeTime(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return '';
+                }
+                
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMinutes / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                
+                if (diffMinutes < 1) {
+                    return 'Agora mesmo';
+                } else if (diffMinutes < 60) {
+                    return `${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''} atrás`;
+                } else if (diffHours < 24) {
+                    return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
+                } else {
+                    return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
+                }
+            } catch (error) {
+                return '';
+            }
+        }
+        
+        function getTimeUntil(dateString) {
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    return '';
+                }
+                
+                const now = new Date();
+                const diffMs = date - now;
+                const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                const diffHours = Math.floor(diffMinutes / 60);
+                const diffDays = Math.floor(diffHours / 24);
+                
+                if (diffMs < 0) {
+                    return 'Atrasado';
+                } else if (diffMinutes < 1) {
+                    return 'Em breve';
+                } else if (diffMinutes < 60) {
+                    return `Em ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
+                } else if (diffHours < 24) {
+                    return `Em ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+                } else {
+                    return `Em ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
+                }
+            } catch (error) {
+                return '';
+            }
+        }
+        
+        function updateDateTimeDisplay() {
+            // Update last refresh
+            const lastRefreshElement = document.getElementById('last-refresh-formatted');
+            const lastRefreshRelative = document.getElementById('last-refresh-relative');
+            if (lastRefreshElement && lastRefreshRelative) {
+                const rawDate = lastRefreshElement.getAttribute('data-raw');
+                lastRefreshElement.textContent = formatDateTime(rawDate);
+                lastRefreshRelative.textContent = getRelativeTime(rawDate);
+            }
+            
+            // Update next refresh
+            const nextRefreshElement = document.getElementById('next-refresh-formatted');
+            const nextRefreshRelative = document.getElementById('next-refresh-relative');
+            if (nextRefreshElement && nextRefreshRelative) {
+                const rawDate = nextRefreshElement.getAttribute('data-raw');
+                nextRefreshElement.textContent = formatDateTime(rawDate);
+                nextRefreshRelative.textContent = getTimeUntil(rawDate);
+            }
+        }
+        
         function refreshToken() {
-            const button = document.querySelector('button');
-            const message = document.getElementById('message');
+            const button = document.querySelector('.refresh-button');
             button.disabled = true;
-            button.textContent = 'Atualizando...';
-            message.className = '';
-            message.textContent = '';
-
+            button.innerHTML = '⏳ Atualizando...';
+            
             fetch('/refresh-token', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    message.className = 'success';
-                    message.textContent = 'Token atualizado com sucesso!';
-                    // Atualiza os valores na página
-                    document.getElementById('access-token').textContent = data.access_token;
-                    document.getElementById('last-refresh').textContent = data.last_refresh;
-                    document.getElementById('next-refresh').textContent = data.next_refresh;
-                    document.getElementById('token-status').textContent = data.status;
+                    alert('✅ Token atualizado com sucesso!');
+                    location.reload();
                 } else {
-                    message.className = 'error';
-                    message.textContent = data.error || 'Erro ao atualizar o token';
+                    alert('❌ Erro ao atualizar token: ' + data.error);
                 }
             })
             .catch(error => {
-                message.className = 'error';
-                message.textContent = 'Erro ao comunicar com o servidor';
+                alert('⚠️ Erro na requisição: ' + error);
             })
             .finally(() => {
                 button.disabled = false;
-                button.textContent = 'Forçar Refresh do Token';
+                button.innerHTML = '🔄 Atualizar Token Agora';
             });
         }
-
-        // Atualiza a página a cada minuto
-        setInterval(() => {
-            window.location.reload();
-        }, 60000);
+        
+        // Initialize date formatting when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDateTimeDisplay();
+            
+            // Update relative times every minute
+            setInterval(updateDateTimeDisplay, 60000);
+        });
     </script>
 </body>
 </html>
