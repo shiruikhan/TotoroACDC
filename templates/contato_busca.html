@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta de Contato - Bling</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f8fafc;
+      margin: 0;
+      padding: 0;
+      color: #0f172a;
+    }
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(2, 6, 23, 0.08);
+      padding: 24px 28px;
+    }
+    h1 {
+      margin: 0 0 10px 0;
+      font-size: 22px;
+    }
+    p.desc {
+      margin: 0 0 20px 0;
+      color: #475569;
+      font-size: 14px;
+    }
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    input[type="number"] {
+      width: 220px;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    input[type="number"]:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+    button {
+      background: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    button:hover {
+      background: #0284c7;
+    }
+    .result {
+      margin-top: 18px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 420px;
+      overflow: auto;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      color: #0f172a;
+    }
+    .muted { color: #64748b; }
+    .error { color: #b91c1c; font-weight: 600; }
+    .footer {
+      margin-top: 22px;
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+    }
+    a { color: #0ea5e9; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Consulta de Contato</h1>
+    <p class="desc">Digite o ID do contato (Bling) e consulte os dados diretamente na API.</p>
+
+    <div class="row">
+      <input id="idInput" type="number" placeholder="ID do contato" />
+      <button id="searchBtn">Consultar</button>
+    </div>
+
+    <div id="status" class="muted" style="margin-top: 12px;">Aguardando consulta...</div>
+
+    <div id="result" class="result" style="display:none;"></div>
+
+    <div class="footer">
+      <a href="/">Status do Token</a>
+      <span class="muted">|</span>
+      <a href="/contato">Consulta de Contato</a>
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('idInput');
+    const btn = document.getElementById('searchBtn');
+    const result = document.getElementById('result');
+    const status = document.getElementById('status');
+
+    function setStatus(msg, isError=false) {
+      status.textContent = msg;
+      status.className = isError ? 'error' : 'muted';
+    }
+
+    async function consultar() {
+      const id = input.value.trim();
+      if (!id) {
+        setStatus('Informe um ID válido.', true);
+        result.style.display = 'none';
+        return;
+      }
+      setStatus('Consultando...');
+      result.style.display = 'none';
+
+      try {
+        const resp = await fetch(`/api/contatos/${encodeURIComponent(id)}`);
+        const data = await resp.json();
+        if (!resp.ok || !data.success) {
+          setStatus(data.error || 'Falha na consulta.', true);
+          return;
+        }
+        setStatus('Consulta realizada com sucesso.');
+        result.textContent = JSON.stringify(data.data, null, 2);
+        result.style.display = 'block';
+      } catch (e) {
+        setStatus('Erro ao consultar: ' + e.message, true);
+      }
+    }
+
+    btn.addEventListener('click', consultar);
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') consultar();
+    });
+  </script>
+</body>
+</html>

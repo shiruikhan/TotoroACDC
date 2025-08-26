@@ -4,3 +4,4 @@
 *.log
 __pycache__
 token_status.json
+exemplo.json

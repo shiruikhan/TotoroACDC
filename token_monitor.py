@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, jsonify
 from token_refresh import renovar_token
 from dotenv import load_dotenv
+from bling_clientes import buscar_detalhes_cliente
 
 app = Flask(__name__)
 load_dotenv()
@@ -90,6 +91,25 @@ def refresh_token():
             'success': False,
             'error': str(e)
         })
+
+# ------------------ NOVA FUNCIONALIDADE: Consulta de Contato por ID ------------------
+@app.route('/contato')
+def contato_page():
+    """Página simples com input para consultar um contato por ID."""
+    return render_template('contato_busca.html')
+
+@app.route('/api/contatos/<int:id_cliente>')
+def api_buscar_contato(id_cliente: int):
+    """Endpoint que consulta a API do Bling e retorna o contato em JSON."""
+    try:
+        data = buscar_detalhes_cliente(id_cliente)
+        if data:
+            return jsonify({'success': True, 'data': data})
+        return jsonify({'success': False, 'error': 'Contato não encontrado'}), 404
+    except Exception as e:
+        app.logger.error(f"Erro ao buscar contato {id_cliente}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+# -------------------------------------------------------------------------------------
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
