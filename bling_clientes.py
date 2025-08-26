@@ -1,136 +1,107 @@
-import requests
+"""Cliente para endpoints de contatos da API v3 do Bling."""
 from time import sleep
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
+import requests
 from logger import logger
 from bling_api import _get_auth_headers
 
+
 def buscar_clientes(pagina: int = 1) -> List[Dict]:
-    """Busca clientes na API v3 do Bling.
+    """Busca clientes (paginado).
 
     Args:
-        pagina (int): Número da página a ser buscada.
+        pagina: número da página (1-based)
 
     Returns:
-        List[Dict]: Lista de clientes retornados pela API.
+        Lista de clientes (cada item é um dict).
     """
-    try:
-        url = "https://www.bling.com.br/Api/v3/contatos"
-        params = {
-            'pagina': pagina,
-            'limite': 100,
-            'criterio': 'cadastro',
-            'ordem': 'DESC'
-        }
-        
-        # Adiciona timeout e retry
-        max_retries = 3
-        retry_delay = 5
-        timeout = 30
-        
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(
-                    url,
-                    params=params,
-                    headers=_get_auth_headers(),
-                    timeout=timeout
+    url = "https://www.bling.com.br/Api/v3/contatos"
+    params = {"pagina": pagina, "limite": 100, "criterio": "cadastro", "ordem": "DESC"}
+    max_retries, retry_delay, timeout = 3, 5, 30
+
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, params=params, headers=_get_auth_headers(), timeout=timeout)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("data", [])
+        except requests.exceptions.Timeout:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    "Timeout ao buscar clientes (página %s). Tentativa %s/%s. Aguardando %ss...",
+                    pagina,
+                    attempt + 1,
+                    max_retries,
+                    retry_delay,
                 )
-                response.raise_for_status()
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if 'data' in data:
-                        return data['data']
-                    return []
-                    
-            except requests.exceptions.Timeout:
-                if attempt < max_retries - 1:
-                    logger.warning(
-                        f"Timeout ao buscar clientes. Tentativa {attempt + 1} de {max_retries}. "
-                        f"Aguardando {retry_delay} segundos..."
-                    )
-                    sleep(retry_delay)
-                    continue
-                else:
-                    logger.error("Erro de timeout após todas as tentativas")
-                    raise
-                    
-            except requests.exceptions.RequestException as e:
-                if attempt < max_retries - 1:
-                    logger.warning(
-                        f"Erro ao buscar clientes: {e}. Tentativa {attempt + 1} de {max_retries}. "
-                        f"Aguardando {retry_delay} segundos..."
-                    )
-                    sleep(retry_delay)
-                    continue
-                else:
-                    logger.error(f"Erro após todas as tentativas: {e}")
-                    raise
-                    
-        return []
-        
-    except Exception as e:
-        logger.error(f"Erro ao buscar clientes: {e}")
-        return []
+                sleep(retry_delay)
+                continue
+            logger.error("Timeout definitivo ao buscar clientes (página %s)", pagina)
+            break
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    "Erro ao buscar clientes (página %s): %s. Tentativa %s/%s. Aguardando %ss...",
+                    pagina,
+                    e,
+                    attempt + 1,
+                    max_retries,
+                    retry_delay,
+                )
+                sleep(retry_delay)
+                continue
+            logger.error("Erro ao buscar clientes (página %s): %s", pagina, e)
+            break
+        except ValueError:
+            logger.error("Resposta inválida (não JSON) para clientes (página %s)", pagina)
+            break
+    return []
+
 
 def buscar_detalhes_cliente(id_cliente: int) -> Optional[Dict]:
-    """Busca detalhes de um cliente específico na API v3 do Bling.
-
-    Args:
-        id_cliente (int): ID do cliente no Bling.
+    """Busca detalhes de um cliente específico.
 
     Returns:
-        Optional[Dict]: Detalhes do cliente ou None em caso de erro.
+        Dict | None: Detalhes do cliente, ou None se ausente/erro.
     """
-    try:
-        url = f"https://www.bling.com.br/Api/v3/contatos/{id_cliente}"
-        
-        # Adiciona timeout e retry
-        max_retries = 3
-        retry_delay = 5
-        timeout = 30
-        
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(
-                    url,
-                    headers=_get_auth_headers(),
-                    timeout=timeout
+    url = f"https://www.bling.com.br/Api/v3/contatos/{id_cliente}"
+    max_retries, retry_delay, timeout = 3, 5, 30
+
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=_get_auth_headers(), timeout=timeout)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("data")
+        except requests.exceptions.Timeout:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    "Timeout ao buscar detalhes do cliente %s. Tentativa %s/%s. Aguardando %ss...",
+                    id_cliente,
+                    attempt + 1,
+                    max_retries,
+                    retry_delay,
                 )
-                response.raise_for_status()
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    if 'data' in data:
-                        return data['data']
-                    return None
-                    
-            except requests.exceptions.Timeout:
-                if attempt < max_retries - 1:
-                    logger.warning(
-                        f"Timeout ao buscar detalhes do cliente {id_cliente}. "
-                        f"Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos..."
-                    )
-                    sleep(retry_delay)
-                    continue
-                else:
-                    logger.error(f"Erro de timeout após todas as tentativas para o cliente {id_cliente}")
-                    raise
-                    
-            except requests.exceptions.RequestException as e:
-                if attempt < max_retries - 1:
-                    logger.warning(
-                        f"Erro ao buscar detalhes do cliente {id_cliente}: {e}. "
-                        f"Tentativa {attempt + 1} de {max_retries}. Aguardando {retry_delay} segundos..."
-                    )
-                    sleep(retry_delay)
-                    continue
-                else:
-                    logger.error(f"Erro após todas as tentativas para o cliente {id_cliente}: {e}")
-                    raise
-                    
-        return None
-        
-    except Exception as e:
-        logger.error(f"Erro ao buscar detalhes do cliente {id_cliente}: {e}")
-        return None
+                sleep(retry_delay)
+                continue
+            logger.error("Timeout definitivo ao buscar detalhes do cliente %s", id_cliente)
+            break
+        except requests.exceptions.RequestException as e:
+            if attempt < max_retries - 1:
+                logger.warning(
+                    "Erro ao buscar detalhes do cliente %s: %s. Tentativa %s/%s. Aguardando %ss...",
+                    id_cliente,
+                    e,
+                    attempt + 1,
+                    max_retries,
+                    retry_delay,
+                )
+                sleep(retry_delay)
+                continue
+            logger.error("Erro ao buscar detalhes do cliente %s: %s", id_cliente, e)
+            break
+        except ValueError:
+            logger.error("Resposta inválida (não JSON) para detalhes do cliente %s", id_cliente)
+            break
+    return None

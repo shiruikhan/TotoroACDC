@@ -1,3 +1,4 @@
+"""Renovação do token de acesso do Bling via OAuth2 usando refresh_token."""
 import os
 import requests
 from dotenv import load_dotenv
@@ -9,6 +10,10 @@ load_dotenv(dotenv_path=ENV_PATH)
 TOKEN_URL = "https://www.bling.com.br/Api/v3/oauth/token"
 
 def _update_env_var(key: str, value: str) -> None:
+    """Atualiza uma variável no processo e persiste no arquivo .env.
+
+    Em caso de falha de persistência, mantém o valor no ambiente e registra um aviso.
+    """
     os.environ[key] = value or ""
     try:
         try:
@@ -29,23 +34,26 @@ def _update_env_var(key: str, value: str) -> None:
     except Exception as e:
         logger.warning("Falha ao persistir %s no .env: %s", key, e)
 
+
 def renovar_token() -> str | None:
-    # Verificar se temos todas as credenciais necessárias
+    """Renova o access_token do Bling usando o refresh_token atual.
+
+    Returns:
+        str | None: Novo access_token em caso de sucesso; None em caso de erro.
+    """
     refresh_token = os.getenv("BLING_REFRESH_TOKEN")
     client_id = os.getenv("BLING_CLIENT_ID")
     client_secret = os.getenv("BLING_CLIENT_SECRET")
 
     if not all([refresh_token, client_id, client_secret]):
-        logger.error("Credenciais incompletas para renovação do token. Verifique BLING_REFRESH_TOKEN, BLING_CLIENT_ID e BLING_CLIENT_SECRET no .env")
+        logger.error(
+            "Credenciais incompletas para renovação do token. Verifique BLING_REFRESH_TOKEN, BLING_CLIENT_ID e BLING_CLIENT_SECRET no .env"
+        )
         return None
 
-    # Autenticação Basic usando client_id e client_secret
     auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-    
-    payload = {
-        "grant_type": "refresh_token",
-        "refresh_token": refresh_token
-    }
+
+    payload = {"grant_type": "refresh_token", "refresh_token": refresh_token}
 
     try:
         resp = requests.post(
@@ -53,12 +61,14 @@ def renovar_token() -> str | None:
             data=payload,
             auth=auth,
             timeout=30,
-            headers={"Content-Type": "application/x-www-form-urlencoded"}
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
         )
-        resp.raise_for_status()  # Levanta exceção para status codes >= 400
+        resp.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        logger.error("Erro HTTP ao renovar token: %s - %s", e.response.status_code, e.response.text[:300])
-        if e.response.status_code == 400:
+        status = getattr(e.response, "status_code", "?")
+        body = getattr(e.response, "text", "")
+        logger.error("Erro HTTP ao renovar token: %s - %s", status, body[:300])
+        if status == 400:
             logger.error("Possível refresh token inválido ou expirado. Necessário reautenticar.")
         return None
     except requests.RequestException as e:
@@ -81,7 +91,7 @@ def renovar_token() -> str | None:
     _update_env_var("BLING_ACCESS_TOKEN", access_token)
     if new_refresh_token:
         _update_env_var("BLING_REFRESH_TOKEN", new_refresh_token)
-        logger.info("Refresh token atualizado com sucesso.")
+        logger.info("Refresh token atualizado.")
 
     logger.info("Token do Bling renovado com sucesso.")
     return access_token

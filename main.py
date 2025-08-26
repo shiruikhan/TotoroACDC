@@ -1,15 +1,11 @@
-# Importação das dependências necessárias
-from logger import logger  # Módulo para logging
-import os  # Módulo para variáveis de ambiente
-import db  # Módulo de conexão com banco de dados
-from bling_api import buscar_produtos  # Função para buscar produtos na API do Bling
-from detalhes_bling import update_product_details  # Função para atualizar detalhes dos produtos
+"""Sincroniza produtos do Bling com o banco de dados MySQL."""
+from logger import logger
+import os
+import db
+from bling_api import buscar_produtos
+from detalhes_bling import update_product_details
 
-# Configurações através de variáveis de ambiente
-# Tempo máximo em horas para considerar os detalhes do produto como desatualizados
-DETAILS_MAX_AGE_HOURS = int(os.getenv("DETAILS_MAX_AGE_HOURS", "168"))  # Padrão: 7 dias
-# Limite de itens por página na busca de produtos
-BUSCA_LIMITE = int(os.getenv("BUSCA_LIMITE", "100"))  # Padrão: 100 itens por página
+DETAILS_MAX_AGE_HOURS = int(os.getenv("DETAILS_MAX_AGE_HOURS", "168"))
 
 def _safe_float(value):
     """Converte um valor para float de forma segura.
@@ -26,20 +22,6 @@ def _safe_float(value):
         return float(str(value).replace(",", "."))  # Converte vírgula para ponto
     except (ValueError, TypeError):
         return 0.0
-
-def _safe_int(value):
-    """Converte um valor para inteiro de forma segura.
-    
-    Args:
-        value: Valor a ser convertido para inteiro
-    
-    Returns:
-        int: Valor convertido ou 0 em caso de erro
-    """
-    try:
-        return int(float(str(value).replace(",", ".")))
-    except (ValueError, TypeError):
-        return 0
 
 def _mapear_produto(p: dict) -> dict:
     """Mapeia os dados do produto da API do Bling para o formato do banco de dados.
@@ -91,8 +73,8 @@ def main():
     """
     conn = None
     try:
-        # Inicia o processo de sincronização
-        logger.warning("Iniciando sincronização com Bling...")
+        logger.info("Iniciando sincronização com Bling...")
+        
         # Estabelece conexão com o banco de dados
         conn = db.conectar_mysql()
         conn.autocommit = False  # Desativa autocommit para melhor controle
@@ -104,7 +86,7 @@ def main():
         total_det_skip = 0
         total_det_fail = 0
 
-        # Busca todos os produtos primeiro
+        # Busca paginada de todos os produtos da API
         todos_produtos = []
         pagina = 1
         while True:
@@ -114,7 +96,7 @@ def main():
             todos_produtos.extend(produtos_api)
             pagina += 1
 
-        logger.warning(f"Total de produtos encontrados na API: {len(todos_produtos)}")
+        logger.info("Total de produtos encontrados na API: %s", len(todos_produtos))
 
         # Processa todos os produtos em um único lote
         mapeados = [_mapear_produto(p) for p in todos_produtos if p.get("id")]
@@ -128,7 +110,7 @@ def main():
             # Verifica se os registros foram inseridos
             cursor.execute("SELECT COUNT(*) FROM produtos_bling")
             total_registros = cursor.fetchone()[0]
-            logger.warning(f"Total de registros no banco após upsert: {total_registros}")
+            logger.info("Total de registros no banco após upsert: %s", total_registros)
 
         # Processa detalhes em lote
         for mp in mapeados:
@@ -149,16 +131,19 @@ def main():
             # Commit a cada 100 detalhes processados
             if (total_det_ok + total_det_skip + total_det_fail) % 100 == 0:
                 conn.commit()
-                logger.warning(f"Commit realizado após processar {total_det_ok + total_det_skip + total_det_fail} detalhes")
+                logger.info(
+                    "Commit realizado após processar %s detalhes",
+                    total_det_ok + total_det_skip + total_det_fail,
+                )
 
         conn.commit()  # commit final
         
         # Verifica total final de registros
         cursor.execute("SELECT COUNT(*) FROM produtos_bling")
         total_final = cursor.fetchone()[0]
-        logger.warning(f"Total final de registros no banco: {total_final}")
+        logger.info("Total final de registros no banco: %s", total_final)
 
-        logger.warning(
+        logger.info(
             "Finalizado. Processados=%s | Upserts=%s | Detalhes ok=%s | Detalhes pulados=%s | Detalhes falha=%s",
             total_processados, total_upserts, total_det_ok, total_det_skip, total_det_fail
         )

@@ -1,3 +1,4 @@
+"""Sincroniza clientes do Bling com o banco de dados MySQL."""
 from typing import List, Dict
 from mysql.connector import MySQLConnection
 import mysql.connector
@@ -8,10 +9,11 @@ from datetime import datetime, timezone
 import re
 
 def _criar_tabela_clientes(conn: MySQLConnection) -> None:
-    """Cria a tabela de clientes se não existir."""
+    """Cria ou garante a existência da tabela clientes_bling."""
     cursor = conn.cursor()
     try:
-        cursor.execute("""
+        cursor.execute(
+            """
             CREATE TABLE IF NOT EXISTS clientes_bling (
                 id BIGINT(20) NOT NULL AUTO_INCREMENT,
                 codigo BIGINT(20) DEFAULT NULL,
@@ -36,11 +38,12 @@ def _criar_tabela_clientes(conn: MySQLConnection) -> None:
                 data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-        """)
+            """
+        )
         conn.commit()
-        logger.info("Tabela clientes_bling criada/verificada com sucesso")
+        logger.info("Tabela clientes_bling criada/verificada")
     except Exception as e:
-        logger.error(f"Erro ao criar tabela clientes_bling: {e}")
+        logger.error("Erro ao criar tabela clientes_bling: %s", e)
         raise
     finally:
         cursor.close()
@@ -114,22 +117,18 @@ def _api_data_alteracao(cliente: Dict):
     return None
 
 def _deve_atualizar(cursor, id_cliente: int, api_dt):
-    """Retorna True se deve inserir/atualizar com base na comparação de datas.
-    - Se não existe no banco: True (inserir)
-    - Se api_dt é None e registro já existe: False (não atualizar por falta de referência)
-    - Se api_dt > data_alteracao do banco: True, caso contrário False
-    """
+    """Decide se deve inserir/atualizar com base na comparação de datas."""
     try:
         cursor.execute("SELECT data_alteracao FROM clientes_bling WHERE id = %s", (id_cliente,))
         row = cursor.fetchone()
         if row is None:
             return True
-        db_dt = row[0]  # datetime do MySQL (naive)
+        db_dt = row[0]
         if api_dt is None:
             return False
         return api_dt > db_dt
     except Exception as e:
-        logger.warning(f"Falha ao comparar data_alteracao para id={id_cliente}: {e}. Prosseguindo com atualização.")
+        logger.warning("Falha ao comparar data_alteracao para id=%s: %s. Prosseguindo.", id_cliente, e)
         return True
 
 def _inserir_ou_atualizar_cliente(cursor, cliente: Dict) -> bool:
@@ -226,61 +225,54 @@ def sincronizar_clientes() -> None:
     logger.info("Iniciando sincronização de clientes do Bling")
     conn = conectar_mysql()
     try:
-        # Cria a tabela se não existir
         _criar_tabela_clientes(conn)
-        
         cursor = conn.cursor()
         pagina = 1
         total_sincronizado = 0
-        logger.info("Buscando clientes do Bling - Página %d", pagina)
-        
+        logger.info("Buscando clientes do Bling - Página %s", pagina)
+
         while True:
-            # Busca clientes da página atual
             clientes = buscar_clientes(pagina)
             if not clientes:
                 logger.info("Não há mais clientes para sincronizar")
                 break
-                
-            logger.info(f"Encontrados {len(clientes)} clientes na página {pagina}")
-                
-            # Processa cada cliente
+
+            logger.info("Encontrados %s clientes na página %s", len(clientes), pagina)
+
             for cliente in clientes:
                 cliente_id = cliente.get('id')
-                logger.debug(f"Processando cliente ID: {cliente_id}")
-                
-                # Sempre busca os detalhes completos do cliente pelo ID
+                logger.debug("Processando cliente ID: %s", cliente_id)
+
                 detalhes = buscar_detalhes_cliente(cliente_id)
                 if detalhes:
-                    logger.debug(f"Detalhes obtidos para cliente {cliente_id}")
+                    logger.debug("Detalhes obtidos para cliente %s", cliente_id)
                     cliente = detalhes
                 else:
-                    logger.warning(f"Não foi possível obter detalhes do cliente {cliente_id}; prosseguindo com dados simplificados da listagem")
-                
-                # Validação: apenas atualizar se API estiver mais recente que o banco
+                    logger.warning("Não foi possível obter detalhes do cliente %s; prosseguindo com dados da listagem", cliente_id)
+
                 api_dt = _api_data_alteracao(cliente)
                 if not _deve_atualizar(cursor, cliente_id, api_dt):
-                    logger.debug(f"Pulado update do cliente {cliente_id}: banco mais recente/igual à API")
+                    logger.debug("Pulado update do cliente %s: banco mais recente/igual à API", cliente_id)
                     continue
-                
+
                 if _inserir_ou_atualizar_cliente(cursor, cliente):
                     total_sincronizado += 1
-                    logger.debug(f"Cliente ID {cliente_id} sincronizado com sucesso")
-                    
+                    logger.debug("Cliente ID %s sincronizado", cliente_id)
+
                     if total_sincronizado % 100 == 0:
-                        logger.info(f"Sincronizados {total_sincronizado} clientes")
+                        logger.info("Sincronizados %s clientes", total_sincronizado)
                         conn.commit()
-                        logger.debug("Commit realizado no banco de dados")
-            
-            # Commit a cada página
+                        logger.debug("Commit realizado")
+
             conn.commit()
-            logger.info(f"Página {pagina} processada. Total sincronizado: {total_sincronizado}")
-            
+            logger.info("Página %s processada. Total sincronizado: %s", pagina, total_sincronizado)
+
             pagina += 1
-        
-        logger.info(f"Sincronização concluída. Total de clientes sincronizados: {total_sincronizado}")
-        
+
+        logger.info("Sincronização concluída. Total de clientes sincronizados: %s", total_sincronizado)
+
     except Exception as e:
-        logger.error(f"Erro durante sincronização: {e}")
+        logger.error("Erro durante sincronização: %s", e)
         conn.rollback()
         raise
     finally:
