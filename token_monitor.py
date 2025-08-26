@@ -13,7 +13,7 @@ from token_refresh import renovar_token
 from dotenv import load_dotenv
 from bling_clientes import buscar_detalhes_cliente
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static', static_folder='static')
 load_dotenv()
 
 LAST_REFRESH_FILE = 'token_status.json'
@@ -139,27 +139,17 @@ def contato_page():
             <meta charset=\"UTF-8\">
             <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
             <title>Consulta de Contato</title>
-            <style>
-                body { font-family: Arial, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
-                .card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); }
-                h1 { font-size: 1.5rem; margin-bottom: 16px; }
-                input, button { padding: 10px 12px; font-size: 1rem; }
-                input { width: 200px; border: 1px solid #cbd5e1; border-radius: 6px; }
-                button { background: #2563eb; color: white; border: none; border-radius: 6px; margin-left: 8px; cursor: pointer; }
-                button:hover { background: #1d4ed8; }
-                pre { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 6px; overflow: auto; }
-                .hint { color: #64748b; margin-top: 8px; font-size: 0.95rem; }
-            </style>
+            <link rel=\"stylesheet\" href=\"/static/css/styles.css\"> 
         </head>
         <body>
-            <div class=\"card\">
+            <div class=\"card container\">
                 <h1>Consultar Contato por ID</h1>
                 <div>
                     <input type=\"number\" id=\"id_cliente\" placeholder=\"ID do contato\" />
-                    <button onclick=\"buscar()\">Buscar</button>
+                    <button class=\"btn\" onclick=\"buscar()\">Buscar</button>
                 </div>
-                <p class=\"hint\">Dica: envie um GET para <code>/api/contatos/&lt;id&gt;</code></p>
-                <pre id=\"resultado\"></pre>
+                <p class=\"muted\">Dica: envie um GET para <code>/api/contatos/&lt;id&gt;</code></p>
+                <pre id=\"resultado\" class=\"result\"></pre>
             </div>
             <script>
                 async function buscar() {

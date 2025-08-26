@@ -1,372 +1,131 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status do Token Bling</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .container {
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            backdrop-filter: blur(10px);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 2.2em;
-            font-weight: 300;
-        }
-        .status-item {
-            margin: 20px 0;
-            padding: 20px;
-            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
-            border-radius: 8px;
-            border-left: 5px solid #007bff;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .status-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        .status-label {
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            font-size: 1.1em;
-        }
-        .status-label .icon {
-            margin-right: 8px;
-            font-size: 1.2em;
-        }
-        .status-value {
-            color: #212529;
-            font-family: 'Courier New', monospace;
-            background-color: #ffffff;
-            padding: 12px;
-            border-radius: 6px;
-            word-break: break-all;
-            border: 1px solid #dee2e6;
-            font-size: 0.95em;
-            line-height: 1.4;
-        }
-        .status-valid {
-            border-left-color: #28a745;
-        }
-        .status-invalid {
-            border-left-color: #dc3545;
-        }
-        .status-warning {
-            border-left-color: #ffc107;
-        }
-        .refresh-button {
-            background: linear-gradient(145deg, #007bff, #0056b3);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            margin-top: 30px;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
-        }
-        .refresh-button:hover {
-            background: linear-gradient(145deg, #0056b3, #004085);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,123,255,0.4);
-        }
-        .refresh-button:disabled {
-            background: #6c757d;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        .datetime-info {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .datetime-primary {
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .datetime-secondary {
-            font-size: 0.9em;
-            color: #6c757d;
-            font-style: italic;
-        }
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .indicator-valid {
-            background-color: #28a745;
-            box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
-        }
-        .indicator-invalid {
-            background-color: #dc3545;
-            box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
-        }
-        .indicator-warning {
-            background-color: #ffc107;
-            box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
-        }
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .label {
-            font-weight: bold;
-            color: #666;
-        }
-        .value {
-            color: #333;
-        }
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        .error {
-            color: #ff0000;
-            margin-top: 10px;
-        }
-        .success {
-            color: #4CAF50;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🔐 Status do Token Bling API</h1>
-        
-        <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
-            <div class="status-label">
-                <span class="icon">🔑</span>
-                Token de Acesso:
-            </div>
-            <div class="status-value">{{ access_token[:50] }}...</div>
-        </div>
-        
-        <div class="status-item">
-            <div class="status-label">
-                <span class="icon">🕐</span>
-                Última Atualização:
-            </div>
-            <div class="status-value">
-                <div class="datetime-info">
-                    <div class="datetime-primary" id="last-refresh-formatted" data-raw="{{ last_refresh }}">{{ last_refresh }}</div>
-                    <div class="datetime-secondary" id="last-refresh-relative"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="status-item">
-            <div class="status-label">
-                <span class="icon">⏰</span>
-                Próxima Atualização:
-            </div>
-            <div class="status-value">
-                <div class="datetime-info">
-                    <div class="datetime-primary" id="next-refresh-formatted" data-raw="{{ next_refresh }}">{{ next_refresh }}</div>
-                    <div class="datetime-secondary" id="next-refresh-relative"></div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
-            <div class="status-label">
-                <span class="status-indicator {{ 'indicator-valid' if status == 'válido' else 'indicator-invalid' }}"></span>
-                <span class="icon">📊</span>
-                Status:
-            </div>
-            <div class="status-value">{{ status.upper() }}</div>
-        </div>
-        
-        <button class="refresh-button" onclick="refreshToken()">🔄 Atualizar Token Agora</button>
-    </div>
+{% extends 'base.html' %}
+{% block title %}Status do Token Bling{% endblock %}
 
-    <script>
-        function formatDateTime(dateString) {
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) {
-                    return dateString; // Return original if invalid
-                }
-                
-                const options = {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                };
-                
-                const timeOptions = {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZoneName: 'short'
-                };
-                
-                const formattedDate = date.toLocaleDateString('pt-BR', options);
-                const formattedTime = date.toLocaleTimeString('pt-BR', timeOptions);
-                
-                return `${formattedDate}, ${formattedTime}`;
-            } catch (error) {
-                return dateString; // Return original if error
-            }
-        }
-        
-        function getRelativeTime(dateString) {
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) {
-                    return '';
-                }
-                
-                const now = new Date();
-                const diffMs = now - date;
-                const diffMinutes = Math.floor(diffMs / (1000 * 60));
-                const diffHours = Math.floor(diffMinutes / 60);
-                const diffDays = Math.floor(diffHours / 24);
-                
-                if (diffMinutes < 1) {
-                    return 'Agora mesmo';
-                } else if (diffMinutes < 60) {
-                    return `${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''} atrás`;
-                } else if (diffHours < 24) {
-                    return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
-                } else {
-                    return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
-                }
-            } catch (error) {
-                return '';
-            }
-        }
-        
-        function getTimeUntil(dateString) {
-            try {
-                const date = new Date(dateString);
-                if (isNaN(date.getTime())) {
-                    return '';
-                }
-                
-                const now = new Date();
-                const diffMs = date - now;
-                const diffMinutes = Math.floor(diffMs / (1000 * 60));
-                const diffHours = Math.floor(diffMinutes / 60);
-                const diffDays = Math.floor(diffHours / 24);
-                
-                if (diffMs < 0) {
-                    return 'Atrasado';
-                } else if (diffMinutes < 1) {
-                    return 'Em breve';
-                } else if (diffMinutes < 60) {
-                    return `Em ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
-                } else if (diffHours < 24) {
-                    return `Em ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
-                } else {
-                    return `Em ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
-                }
-            } catch (error) {
-                return '';
-            }
-        }
-        
-        function updateDateTimeDisplay() {
-            // Update last refresh
-            const lastRefreshElement = document.getElementById('last-refresh-formatted');
-            const lastRefreshRelative = document.getElementById('last-refresh-relative');
-            if (lastRefreshElement && lastRefreshRelative) {
-                const rawDate = lastRefreshElement.getAttribute('data-raw');
-                lastRefreshElement.textContent = formatDateTime(rawDate);
-                lastRefreshRelative.textContent = getRelativeTime(rawDate);
-            }
-            
-            // Update next refresh
-            const nextRefreshElement = document.getElementById('next-refresh-formatted');
-            const nextRefreshRelative = document.getElementById('next-refresh-relative');
-            if (nextRefreshElement && nextRefreshRelative) {
-                const rawDate = nextRefreshElement.getAttribute('data-raw');
-                nextRefreshElement.textContent = formatDateTime(rawDate);
-                nextRefreshRelative.textContent = getTimeUntil(rawDate);
-            }
-        }
-        
-        function refreshToken() {
-            const button = document.querySelector('.refresh-button');
-            button.disabled = true;
-            button.innerHTML = '⏳ Atualizando...';
-            
-            fetch('/refresh-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('✅ Token atualizado com sucesso!');
-                    location.reload();
-                } else {
-                    alert('❌ Erro ao atualizar token: ' + data.error);
-                }
-            })
-            .catch(error => {
-                alert('⚠️ Erro na requisição: ' + error);
-            })
-            .finally(() => {
-                button.disabled = false;
-                button.innerHTML = '🔄 Atualizar Token Agora';
-            });
-        }
-        
-        // Initialize date formatting when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            updateDateTimeDisplay();
-            
-            // Update relative times every minute
-            setInterval(updateDateTimeDisplay, 60000);
-        });
-    </script>
-</body>
-</html>
+{% block content %}
+  <h1>🔐 Status do Token Bling API</h1>
+
+  <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
+    <div class="status-label">
+      <span class="icon">🔑</span>
+      Token de Acesso:
+    </div>
+    <div class="status-value">{{ access_token[:50] }}...</div>
+  </div>
+
+  <div class="status-item">
+    <div class="status-label">
+      <span class="icon">🕐</span>
+      Última Atualização:
+    </div>
+    <div class="status-value">
+      <div class="datetime-info">
+        <div class="datetime-primary" id="last-refresh-formatted" data-raw="{{ last_refresh }}">{{ last_refresh }}</div>
+        <div class="datetime-secondary" id="last-refresh-relative"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-item">
+    <div class="status-label">
+      <span class="icon">⏰</span>
+      Próxima Atualização:
+    </div>
+    <div class="status-value">
+      <div class="datetime-info">
+        <div class="datetime-primary" id="next-refresh-formatted" data-raw="{{ next_refresh }}">{{ next_refresh }}</div>
+        <div class="datetime-secondary" id="next-refresh-relative"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-item {{ 'status-valid' if status == 'válido' else 'status-invalid' }}">
+    <div class="status-label">
+      <span class="status-indicator {{ 'indicator-valid' if status == 'válido' else 'indicator-invalid' }}"></span>
+      <span class="icon">📊</span>
+      Status:
+    </div>
+    <div class="status-value">{{ status.upper() }}</div>
+  </div>
+
+  <button class="refresh-button" onclick="refreshToken()">🔄 Atualizar Token Agora</button>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function formatDateTime(dateString) {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' };
+      const formattedDate = date.toLocaleDateString('pt-BR', options);
+      const formattedTime = date.toLocaleTimeString('pt-BR', timeOptions);
+      return `${formattedDate}, ${formattedTime}`;
+    } catch { return dateString; }
+  }
+  function getRelativeTime(dateString) {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMinutes = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffMinutes < 1) return 'Agora mesmo';
+      if (diffMinutes < 60) return `${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''} atrás`;
+      if (diffHours < 24) return `${diffHours} hora${diffHours > 1 ? 's' : ''} atrás`;
+      return `${diffDays} dia${diffDays > 1 ? 's' : ''} atrás`;
+    } catch { return ''; }
+  }
+  function getTimeUntil(dateString) {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      const now = new Date();
+      const diffMs = date - now;
+      const diffMinutes = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+      if (diffMs < 0) return 'Atrasado';
+      if (diffMinutes < 1) return 'Em breve';
+      if (diffMinutes < 60) return `Em ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`;
+      if (diffHours < 24) return `Em ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
+      return `Em ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
+    } catch { return ''; }
+  }
+  function updateDateTimeDisplay() {
+    const lastEl = document.getElementById('last-refresh-formatted');
+    const lastRel = document.getElementById('last-refresh-relative');
+    if (lastEl && lastRel) {
+      const raw = lastEl.getAttribute('data-raw');
+      lastEl.textContent = formatDateTime(raw);
+      lastRel.textContent = getRelativeTime(raw);
+    }
+    const nextEl = document.getElementById('next-refresh-formatted');
+    const nextRel = document.getElementById('next-refresh-relative');
+    if (nextEl && nextRel) {
+      const raw = nextEl.getAttribute('data-raw');
+      nextEl.textContent = formatDateTime(raw);
+      nextRel.textContent = getTimeUntil(raw);
+    }
+  }
+  function refreshToken() {
+    const button = document.querySelector('.refresh-button');
+    button.disabled = true;
+    button.innerHTML = '⏳ Atualizando...';
+    fetch('/refresh-token', { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) { alert('✅ Token atualizado com sucesso!'); location.reload(); }
+        else { alert('❌ Erro ao atualizar token: ' + d.error); }
+      })
+      .catch(e => alert('⚠️ Erro na requisição: ' + e))
+      .finally(() => { button.disabled = false; button.innerHTML = '🔄 Atualizar Token Agora'; });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    updateDateTimeDisplay();
+    setInterval(updateDateTimeDisplay, 60000);
+  });
+</script>
+{% endblock %}
